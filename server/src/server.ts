@@ -2,12 +2,13 @@ import fastify from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import "dotenv/config";
 import "reflect-metadata";
-
+import { validateEnv, env } from "./config/env";
 const app = fastify({ logger: true });
 
 const start = async () => {
   try {
-    await app.listen({ port: 3000, host: "0.0.0.0" });
+    validateEnv();
+    await app.listen({ port: env.port, host: env.host });
     console.log("server is running");
   } catch (error) {
     app.log.error(error);
