@@ -5,6 +5,7 @@ import "reflect-metadata";
 import { validateEnv, env } from "./config/env";
 import { authRoutes } from "./modules/auth/auth.routes";
 import cors from "@fastify/cors";
+import { AppDataSource } from './db/data-source';
 
 const app = fastify({ logger: true });
 
@@ -34,6 +35,7 @@ const start = async () => {
     app.register(fastifyJwt, {
       secret: env.jwtSecret,
     });
+    await AppDataSource.initialize();
     await app.listen({ port: env.port, host: env.host });
     console.log("server is running on port " + env.port);
   } catch (error) {
