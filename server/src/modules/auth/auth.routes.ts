@@ -7,18 +7,23 @@ import argon2 from "argon2";
 export const authRoutes: FastifyPluginAsync = async (app) => {
   const userRepository = AppDataSource.getRepository(User);
 
-  app.post("register", async (request, reply) => {
+  app.post("/register", async (request, reply) => {
     const parseBody = registerSchema.safeParse(request.body);
 
     if (!parseBody.success) {
       return reply.code(400).send({
         message: "Validation error",
-        error: parseBody.error,
+        error: parseBody.error.issues.map((issue) => {
+          return {
+            path: issue.path.join("."),
+            message: issue.message,
+          };
+        }),
       });
     }
 
     const { name, email, password } = parseBody.data;
-    const isUserExist = await userRepository.find({ where: { email } });
+    const isUserExist = await userRepository.findOne({ where: { email } });
     if (isUserExist) {
       return reply
         .code(409)

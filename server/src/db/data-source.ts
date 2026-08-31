@@ -1,5 +1,9 @@
 import { DataSource } from "typeorm";
 import { env } from "../config/env";
+import { User } from "./entities/user.entity";
+import { Event } from "./entities/event.entity";
+import { EventParticipant } from "./entities/participant.entity";
+import { Tag } from "./entities/tag.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -13,6 +17,6 @@ export const AppDataSource = new DataSource({
 
   synchronize: false,
   logging: true,
-  entities: ["src/db/entities/**/*.ts"],
-  migrations: ["src/db/migrations/**/*.ts"],
+  entities: [User, Event, EventParticipant, Tag],
+  migrations: ["dist/db/migrations/**/*.js"],
 });
