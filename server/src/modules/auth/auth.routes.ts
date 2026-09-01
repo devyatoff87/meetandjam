@@ -8,7 +8,7 @@ type SendError = (
   reply: any,
   code: number,
   message: string,
-  errors?: any
+  errors?: any,
 ) => void;
 
 const sendError: SendError = (reply, code, message, errors) => {
@@ -89,6 +89,26 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         email: user.email,
         name: user.name,
       },
+    });
+  });
+
+  app.get("/me", { preHandler: [app.authenticate] }, async (request, reply) => {
+    const userId = request.user.sub;
+    const user = await userRepository.findOne({
+      where: { id: userId },
+      select: ["id", "email", "name", "createdAt", "updatedAt"],
+    });
+
+    if (!user) {
+      return sendError(reply, 404, "User could not be found");
+    }
+
+    return reply.code(200).send({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      updatedAt: user.updatedAt,
+      createdAt: user.createdAt,
     });
   });
 };
