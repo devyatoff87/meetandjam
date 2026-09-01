@@ -23,17 +23,20 @@ export class Event {
   @Column({ type: "text" })
   description!: string;
 
-  @Column({ type: "int" })
-  capacity!: number;
+  @Column({ type: "int", nullable: true })
+  maxParticipants?: number;
 
-  @Column({ type: "int" })
-  entryPrice!: number;
+  @Column({ type: "text", nullable: true })
+  contactInfo?: string;
+
+  @Column({ type: "int", nullable: true })
+  entryPrice?: number;
 
   @Column({ type: "varchar", length: 255 })
   address!: string;
 
   @Column({ type: "timestamptz" })
-  startedAt!: Date;
+  startsAt!: Date;
 
   @ManyToOne(() => User, (user) => user.events, { onDelete: "CASCADE" })
   owner!: User;
