@@ -4,6 +4,24 @@ import { User } from "../../db/entities/user.entity";
 import { loginSchema, registerSchema } from "./auth.schemas";
 import argon2 from "argon2";
 
+type SendError = (
+  reply: any,
+  code: number,
+  message: string,
+  errors?: any
+) => void;
+
+const sendError: SendError = (reply, code, message, errors) => {
+  const response: any = { message };
+  if (errors) {
+    response.errors = errors.issues.map((issue: any) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+  }
+  reply.code(code).send(response);
+};
+
 export const authRoutes: FastifyPluginAsync = async (app) => {
   const userRepository = AppDataSource.getRepository(User);
 
@@ -11,22 +29,14 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const parseBody = registerSchema.safeParse(request.body);
 
     if (!parseBody.success) {
-      return reply.code(400).send({
-        message: "Validation error",
-        errors: parseBody.error.issues.map((issue) => ({
-          path: issue.path.join("."),
-          message: issue.message,
-        })),
-      });
+      return sendError(reply, 400, "Validation error", parseBody.error);
     }
 
     const { name, email, password } = parseBody.data;
 
     const existingUser = await userRepository.findOne({ where: { email } });
     if (existingUser) {
-      return reply.code(409).send({
-        message: "User with this email already exists",
-      });
+      return sendError(reply, 409, "User with this email already exists");
     }
 
     const passwordHash = await argon2.hash(password);
@@ -52,29 +62,19 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const parseBody = loginSchema.safeParse(request.body);
 
     if (!parseBody.success) {
-      return reply.code(400).send({
-        message: "Validation error",
-        errors: parseBody.error.issues.map((issue) => ({
-          path: issue.path.join("."),
-          message: issue.message,
-        })),
-      });
+      return sendError(reply, 400, "Validation error", parseBody.error);
     }
 
     const { email, password } = parseBody.data;
 
     const user = await userRepository.findOne({ where: { email } });
     if (!user) {
-      return reply.code(401).send({
-        message: "Login or password is not correct",
-      });
+      return sendError(reply, 401, "Login or password is not correct");
     }
 
     const isPasswordValid = await argon2.verify(user.passwordHash, password);
     if (!isPasswordValid) {
-      return reply.code(401).send({
-        message: "Login or password is not correct",
-      });
+      return sendError(reply, 401, "Login or password is not correct");
     }
 
     const token = await reply.jwtSign({
