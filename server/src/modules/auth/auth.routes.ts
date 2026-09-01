@@ -3,24 +3,7 @@ import { AppDataSource } from "../../db/data-source";
 import { User } from "../../db/entities/user.entity";
 import { loginSchema, registerSchema } from "./auth.schemas";
 import argon2 from "argon2";
-
-type SendError = (
-  reply: any,
-  code: number,
-  message: string,
-  errors?: any,
-) => void;
-
-const sendError: SendError = (reply, code, message, errors) => {
-  const response: any = { message };
-  if (errors) {
-    response.errors = errors.issues.map((issue: any) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
-  }
-  reply.code(code).send(response);
-};
+import { sendError } from "../helpers";
 
 export const authRoutes: FastifyPluginAsync = async (app) => {
   const userRepository = AppDataSource.getRepository(User);
