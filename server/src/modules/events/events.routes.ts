@@ -2,7 +2,7 @@ import { FastifyPlugin, FastifyPluginAsync } from "fastify";
 import { AppDataSource } from "../../db/data-source";
 import { Event } from "../../db/entities/event.entity";
 import { EventParticipant } from "../../db/entities/participant.entity";
-import { createEventSchema } from "./events.schemas";
+import { createEventSchema, updateEventSchema } from "./events.schemas";
 import { checkAdminship, checkEventOwnership, sendError } from "../helpers";
 import { User } from "../../db/entities/user.entity";
 
@@ -72,6 +72,32 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
 
       await eventRepository.remove(event);
       return reply.code(200).send({ message: "Event deleted successfully" });
+    },
+  );
+
+  //UPDATE
+  app.patch(
+    "/:id",
+    { preHandler: [app.authenticate] },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const userId = request.user.sub;
+
+      const event = await checkEventOwnership(id, userId, reply);
+      if (!event) return;
+
+      const parseBody = updateEventSchema.safeParse(request.body);
+
+      if (!parseBody.success) {
+        return sendError(reply, 400, "Validation error", parseBody.error);
+      }
+
+      const updatedEvent = await eventRepository.save({
+        ...event,
+        ...parseBody.data,
+      });
+
+      return reply.code(200).send(updatedEvent);
     },
   );
 
