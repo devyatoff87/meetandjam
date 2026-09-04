@@ -1,6 +1,7 @@
 import "@fastify/jwt";
 import "fastify";
 import { FastifyReply, FastifyRequest } from "fastify";
+import { Role } from "./roles";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -10,7 +11,7 @@ declare module "fastify" {
 
 declare module "@fastify/jwt" {
   interface FastifyJWT {
-    payload: { sub: string; email: string };
-    user: { sub: string; email: string };
+    payload: { sub: string; email: string; role: Role };
+    user: { sub: string; email: string; role: Role };
   }
 }
