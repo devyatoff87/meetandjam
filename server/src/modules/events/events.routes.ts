@@ -3,11 +3,11 @@ import { AppDataSource } from "../../db/data-source";
 import { Event } from "../../db/entities/event.entity";
 import { EventParticipant } from "../../db/entities/participant.entity";
 import { createEventSchema } from "./events.schemas";
-import { sendError } from "../helpers";
+import { checkAdminship, checkEventOwnership, sendError } from "../helpers";
+import { User } from "../../db/entities/user.entity";
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
   const eventRepository = AppDataSource.getRepository(Event);
-  const participantRepository = AppDataSource.getRepository(EventParticipant);
 
   //CREATE POST
   app.post(
@@ -60,9 +60,32 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     });
   });
 
-  app.delete("/all", async (request, reply) => {
-    await eventRepository.createQueryBuilder().delete().from(Event).execute();
+  app.delete(
+    "/:id",
+    { preHandler: [app.authenticate] },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const userId = request.user.sub;
 
-    return reply.code(200).send({ message: "All events deleted" });
-  });
+      const event = await checkEventOwnership(id, userId, reply);
+      if (!event) return;
+
+      await eventRepository.remove(event);
+      return reply.code(200).send({ message: "Event deleted successfully" });
+    },
+  );
+
+  //DELETE ALL
+  app.delete(
+    "/all",
+    { preHandler: [app.authenticate] },
+    async (request, reply) => {
+      const isAdmin = await checkAdminship(request, reply);
+      if (!isAdmin) return;
+
+      await eventRepository.createQueryBuilder().delete().from(Event).execute();
+
+      return reply.code(200).send({ message: "All events deleted" });
+    },
+  );
 };
