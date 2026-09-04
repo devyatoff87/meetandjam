@@ -15,4 +15,6 @@ export const createEventSchema = z.object({
   contactInfo: z.string().trim().max(255).optional(),
   startsAt: startsAt,
   entryPrice: z.number().max(255).optional(),
+  isDonationBased: z.boolean().default(false).optional(),
+  donationInfo: z.string().optional(),
 });

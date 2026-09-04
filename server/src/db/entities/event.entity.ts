@@ -32,6 +32,12 @@ export class Event {
   @Column({ type: "int", nullable: true })
   entryPrice?: number;
 
+  @Column({ type: "boolean", default: false, nullable: true })
+  isDonationBased?: boolean;
+
+  @Column({ type: "text", nullable: true })
+  donationInfo?: string;
+
   @Column({ type: "varchar", length: 255 })
   address!: string;
 

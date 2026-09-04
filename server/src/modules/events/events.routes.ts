@@ -29,6 +29,8 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         address,
         startsAt,
         entryPrice,
+        isDonationBased,
+        donationInfo,
       } = parseBody.data;
 
       const event = eventRepository.create({
@@ -40,10 +42,27 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         contactInfo,
         entryPrice,
         ownerId: request.user.sub,
+        isDonationBased,
+        donationInfo,
       });
 
       const saveEvent = await eventRepository.save(event);
       return reply.code(201).send(saveEvent);
     },
   );
+
+  //GET ALL EVENTS
+  app.get("/", async () => {
+    return eventRepository.find({
+      order: {
+        startsAt: "ASC",
+      },
+    });
+  });
+
+  app.delete("/all", async (request, reply) => {
+    await eventRepository.createQueryBuilder().delete().from(Event).execute();
+
+    return reply.code(200).send({ message: "All events deleted" });
+  });
 };
