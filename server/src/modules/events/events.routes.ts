@@ -9,6 +9,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   const eventRepository = AppDataSource.getRepository(Event);
   const participantRepository = AppDataSource.getRepository(EventParticipant);
 
+  //CREATE POST
   app.post(
     "/",
     {
@@ -17,7 +18,8 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const parseBody = createEventSchema.safeParse(request.body);
 
-      if (!parseBody.success) return sendError(reply, 400, "Validation error");
+      if (!parseBody.success)
+        return sendError(reply, 400, "Validation error", parseBody.error);
 
       const {
         title,

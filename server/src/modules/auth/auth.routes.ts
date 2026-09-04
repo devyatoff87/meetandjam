@@ -8,6 +8,7 @@ import { sendError } from "../helpers";
 export const authRoutes: FastifyPluginAsync = async (app) => {
   const userRepository = AppDataSource.getRepository(User);
 
+  //REGISTER
   app.post("/register", async (request, reply) => {
     const parseBody = registerSchema.safeParse(request.body);
 
@@ -41,6 +42,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     });
   });
 
+  //LOGIN
   app.post("/login", async (request, reply) => {
     const parseBody = loginSchema.safeParse(request.body);
 
@@ -75,6 +77,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     });
   });
 
+  //GET AUTHORIZED USERS DATA
   app.get("/me", { preHandler: [app.authenticate] }, async (request, reply) => {
     const userId = request.user.sub;
     const user = await userRepository.findOne({
