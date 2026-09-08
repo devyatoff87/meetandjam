@@ -10,15 +10,8 @@ type SendError = (
   errors?: any,
 ) => void;
 
-export const sendError: SendError = (reply, code, message, errors) => {
-  const response: any = { message };
-  if (errors) {
-    response.errors = errors.issues.map((issue: any) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
-  }
-  reply.code(code).send(response);
+export const sendError = (reply: any, status: number, message: string) => {
+  return reply.code(status).send({ message });
 };
 
 export const checkAdminship = async (userId: string): Promise<boolean> => {

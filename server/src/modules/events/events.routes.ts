@@ -11,7 +11,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     const parseBody = createEventSchema.safeParse(request.body);
 
     if (!parseBody.success) {
-      return sendError(reply, 400, "Validation error", parseBody.error);
+      return sendError(reply, 400, "Validation error");
     }
 
     try {
@@ -39,7 +39,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       const parseBody = updateEventSchema.safeParse(request.body);
 
       if (!parseBody.success) {
-        return sendError(reply, 400, "Validation error", parseBody.error);
+        return sendError(reply, 400, "Validation error");
       }
 
       try {
@@ -91,12 +91,13 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     "/join",
     { preHandler: [app.authenticate] },
     async (request, reply) => {
-      const { id, eventId } = request.params as { id: string; eventId: string };
+      const { eventId } = request.body as { eventId: string };
+      const userId = request.user.sub;
       try {
-        const participant = await eventsService.joinEvent(eventId, id);
+        const participant = await eventsService.joinEvent(eventId, userId);
         return reply.code(201).send(participant);
       } catch (error: any) {
-        return sendError(reply, 400, error.message, error);
+        return sendError(reply, 400, error.message);
       }
     },
   );
