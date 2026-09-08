@@ -1,117 +1,89 @@
-import { FastifyPlugin, FastifyPluginAsync } from "fastify";
-import { AppDataSource } from "../../db/data-source";
-import { Event } from "../../db/entities/event.entity";
-import { EventParticipant } from "../../db/entities/participant.entity";
+import { FastifyPluginAsync } from "fastify";
 import { createEventSchema, updateEventSchema } from "./events.schemas";
-import { checkAdminship, checkEventOwnership, sendError } from "../helpers";
-import { User } from "../../db/entities/user.entity";
+import { sendError } from "../helpers";
+import { EventsService } from "./events.services";
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
-  const eventRepository = AppDataSource.getRepository(Event);
+  const eventsService = new EventsService();
 
-  //CREATE POST
-  app.post(
-    "/",
-    {
-      preHandler: [app.authenticate],
-    },
-    async (request, reply) => {
-      const parseBody = createEventSchema.safeParse(request.body);
+  // CREATE
+  app.post("/", { preHandler: [app.authenticate] }, async (request, reply) => {
+    const parseBody = createEventSchema.safeParse(request.body);
 
-      if (!parseBody.success)
-        return sendError(reply, 400, "Validation error", parseBody.error);
+    if (!parseBody.success) {
+      return sendError(reply, 400, "Validation error", parseBody.error);
+    }
 
-      const {
-        title,
-        description,
-        contactInfo,
-        maxParticipants,
-        address,
-        startsAt,
-        entryPrice,
-        isDonationBased,
-        donationInfo,
-      } = parseBody.data;
-
-      const event = eventRepository.create({
-        title,
-        description,
-        maxParticipants,
-        address,
-        startsAt,
-        contactInfo,
-        entryPrice,
-        ownerId: request.user.sub,
-        isDonationBased,
-        donationInfo,
-      });
-
-      const saveEvent = await eventRepository.save(event);
-      return reply.code(201).send(saveEvent);
-    },
-  );
-
-  //GET ALL EVENTS
-  app.get("/", async () => {
-    return eventRepository.find({
-      order: {
-        startsAt: "ASC",
-      },
-    });
+    try {
+      const event = await eventsService.create(
+        parseBody.data,
+        request.user.sub,
+      );
+      return reply.code(201).send(event);
+    } catch (error: any) {
+      return sendError(reply, 400, error.message);
+    }
   });
 
-  app.delete(
-    "/:id",
-    { preHandler: [app.authenticate] },
-    async (request, reply) => {
-      const { id } = request.params as { id: string };
-      const userId = request.user.sub;
+  // GET ALL
+  app.get("/", async () => {
+    return await eventsService.findAll();
+  });
 
-      const event = await checkEventOwnership(id, userId, reply);
-      if (!event) return;
-
-      await eventRepository.remove(event);
-      return reply.code(200).send({ message: "Event deleted successfully" });
-    },
-  );
-
-  //UPDATE
+  // UPDATE
   app.patch(
     "/:id",
     { preHandler: [app.authenticate] },
     async (request, reply) => {
       const { id } = request.params as { id: string };
-      const userId = request.user.sub;
-
-      const event = await checkEventOwnership(id, userId, reply);
-      if (!event) return;
-
       const parseBody = updateEventSchema.safeParse(request.body);
 
       if (!parseBody.success) {
         return sendError(reply, 400, "Validation error", parseBody.error);
       }
 
-      const updatedEvent = await eventRepository.save({
-        ...event,
-        ...parseBody.data,
-      });
-
-      return reply.code(200).send(updatedEvent);
+      try {
+        const updated = await eventsService.update(
+          id,
+          request.user.sub,
+          parseBody.data,
+        );
+        return reply.send(updated);
+      } catch (error: any) {
+        const status = error.message === "Event not found" ? 404 : 403;
+        return sendError(reply, status, error.message);
+      }
     },
   );
 
-  //DELETE ALL
+  // DELETE ONE
+  app.delete(
+    "/:id",
+    { preHandler: [app.authenticate] },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+
+      try {
+        await eventsService.delete(id, request.user.sub);
+        return reply.code(200).send({ message: "Event deleted" });
+      } catch (error: any) {
+        const status = error.message === "Event not found" ? 404 : 403;
+        return sendError(reply, status, error.message);
+      }
+    },
+  );
+
+  // DELETE ALL
   app.delete(
     "/all",
     { preHandler: [app.authenticate] },
     async (request, reply) => {
-      const isAdmin = await checkAdminship(request, reply);
-      if (!isAdmin) return;
-
-      await eventRepository.createQueryBuilder().delete().from(Event).execute();
-
-      return reply.code(200).send({ message: "All events deleted" });
+      try {
+        await eventsService.deleteAll(request.user.sub);
+        return reply.code(200).send({ message: "All events deleted" });
+      } catch (error: any) {
+        return sendError(reply, 403, error.message);
+      }
     },
   );
 };
