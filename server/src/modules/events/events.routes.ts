@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { createEventSchema, updateEventSchema } from "./events.schemas";
-import { sendError } from "../helpers";
+import { sendBusinessError, sendValidationError } from "../helpers";
 import { EventsService } from "./events.services";
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
@@ -11,7 +11,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     const parseBody = createEventSchema.safeParse(request.body);
 
     if (!parseBody.success) {
-      return sendError(reply, 400, "Validation error");
+      return sendValidationError(reply, parseBody.error);
     }
 
     try {
@@ -21,7 +21,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       );
       return reply.code(201).send(event);
     } catch (error: any) {
-      return sendError(reply, error.status || 500, error.message);
+      return sendBusinessError(reply, error.status || 500, error.message);
     }
   });
 
@@ -39,7 +39,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       const parseBody = updateEventSchema.safeParse(request.body);
 
       if (!parseBody.success) {
-        return sendError(reply, 400, "Validation error");
+        return sendValidationError(reply, parseBody.error);
       }
 
       try {
@@ -50,7 +50,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         );
         return reply.send(updated);
       } catch (error: any) {
-        return sendError(reply, error.status || 500, error.message);
+        return sendBusinessError(reply, error.status || 500, error.message);
       }
     },
   );
@@ -66,7 +66,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         await eventsService.delete(id, request.user.sub);
         return reply.code(200).send({ message: "Event deleted" });
       } catch (error: any) {
-        return sendError(reply, error.status || 500, error.message);
+        return sendBusinessError(reply, error.status || 500, error.message);
       }
     },
   );
@@ -80,7 +80,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         await eventsService.deleteAll(request.user.sub);
         return reply.code(200).send({ message: "All events deleted" });
       } catch (error: any) {
-        return sendError(reply, error.status || 500, error.message);
+        return sendBusinessError(reply, error.status || 500, error.message);
       }
     },
   );
@@ -101,7 +101,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         );
         return reply.code(201).send(participant);
       } catch (error: any) {
-        return sendError(reply, error.status || 500, error.message);
+        return sendBusinessError(reply, error.status || 500, error.message);
       }
     },
   );
@@ -118,7 +118,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         const result = await eventsService.joinEvent(eventId, userId, "leave");
         return reply.code(200).send(result);
       } catch (error: any) {
-        return sendError(reply, error.status || 500, error.message);
+        return sendBusinessError(reply, error.status || 500, error.message);
       }
     },
   );

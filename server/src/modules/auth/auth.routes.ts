@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { loginSchema, registerSchema } from "./auth.schemas";
-import { sendError } from "../helpers";
+import { sendBusinessError, sendValidationError } from "../helpers";
 import AuthService from "./auth.service";
 
 export const authRoutes: FastifyPluginAsync = async (app) => {
@@ -11,7 +11,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const parseBody = registerSchema.safeParse(request.body);
 
     if (!parseBody.success) {
-      return sendError(reply, 400, "Validation error");
+      return sendValidationError(reply, parseBody.error);
     }
 
     try {
@@ -30,7 +30,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         },
       });
     } catch (error: any) {
-      return sendError(reply, error.status || 500, error.message);
+      return sendBusinessError(reply, error.status || 500, error.message);
     }
   });
 
@@ -39,7 +39,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const parseBody = loginSchema.safeParse(request.body);
 
     if (!parseBody.success) {
-      return sendError(reply, 400, "Validation error");
+      return sendValidationError(reply, parseBody.error);
     }
 
     try {
@@ -58,7 +58,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         },
       });
     } catch (error: any) {
-      return sendError(reply, error.status || 500, error.message);
+      return sendBusinessError(reply, error.status || 500, error.message);
     }
   });
 
@@ -76,7 +76,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         createdAt: user.createdAt,
       });
     } catch (error: any) {
-      return sendError(reply, error.status || 500, error.message);
+      return sendBusinessError(reply, error.status || 500, error.message);
     }
   });
 };
