@@ -1,8 +1,7 @@
-import { FastifyReply, FastifyRequest } from "fastify";
 import { AppDataSource } from "../db/data-source";
 import { User } from "../db/entities/user.entity";
 import { Event } from "../db/entities/event.entity";
-import { Role, ROLES } from "../types/roles";
+import { ROLES } from "../types/roles";
 
 type SendError = (
   reply: any,
@@ -22,44 +21,38 @@ export const sendError: SendError = (reply, code, message, errors) => {
   reply.code(code).send(response);
 };
 
-export const checkAdminship = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
-): Promise<boolean> => {
+export const checkAdminship = async (userId: string): Promise<boolean> => {
   const userRepository = AppDataSource.getRepository(User);
 
   const user = await userRepository.findOne({
-    where: { id: request.user.sub },
+    where: { id: userId },
+    select: ["role"],
   });
 
-  if (!user || user.role !== ROLES.ADMIN) {
-    sendError(reply, 403, "Forbidden: Admin access required");
-    return false;
-  }
-
-  return true;
+  return user?.role === ROLES.ADMIN;
 };
 
 export const checkEventOwnership = async (
   eventId: string,
   userId: string,
-  reply: FastifyReply,
-): Promise<Event | null> => {
+): Promise<{ event: Event | null; isOwner: boolean; isAdmin: boolean }> => {
   const eventRepository = AppDataSource.getRepository(Event);
 
   const event = await eventRepository.findOne({
     where: { id: eventId },
+    select: ["id", "ownerId"],
   });
 
   if (!event) {
-    sendError(reply, 404, "Event not found");
-    return null;
+    return { event: null, isOwner: false, isAdmin: false };
   }
 
-  if (event.ownerId !== userId) {
-    sendError(reply, 403, "Forbidden: You are not the owner of this event");
-    return null;
+  const isOwner = event.ownerId === userId;
+
+  let isAdmin = false;
+  if (!isOwner) {
+    isAdmin = await checkAdminship(userId);
   }
 
-  return event;
+  return { event, isOwner, isAdmin };
 };
