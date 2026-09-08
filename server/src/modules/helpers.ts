@@ -56,3 +56,15 @@ export const checkEventOwnership = async (
 
   return { event, isOwner, isAdmin };
 };
+
+export function errorTrigger(
+  condition: boolean,
+  message: string,
+  status: number,
+) {
+  if (condition)
+    throw {
+      message: message,
+      status: status,
+    };
+}
