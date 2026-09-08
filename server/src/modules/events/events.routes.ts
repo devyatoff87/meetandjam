@@ -86,4 +86,18 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       }
     },
   );
+
+  app.post(
+    "/join",
+    { preHandler: [app.authenticate] },
+    async (request, reply) => {
+      const { id, eventId } = request.params as { id: string; eventId: string };
+      try {
+        const participant = await eventsService.joinEvent(eventId, id);
+        return reply.code(201).send(participant);
+      } catch (error: any) {
+        return sendError(reply, 400, error.message, error);
+      }
+    },
+  );
 };
