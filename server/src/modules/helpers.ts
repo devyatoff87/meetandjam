@@ -2,15 +2,13 @@ import { AppDataSource } from "../db/data-source";
 import { User } from "../db/entities/user.entity";
 import { Event } from "../db/entities/event.entity";
 import { ROLES } from "../types/roles";
+import { FastifyReply } from "fastify";
 
-type SendError = (
-  reply: any,
-  code: number,
+export const sendError = (
+  reply: FastifyReply,
+  status: number,
   message: string,
-  errors?: any,
-) => void;
-
-export const sendError = (reply: any, status: number, message: string) => {
+) => {
   return reply.code(status).send({ message });
 };
 
