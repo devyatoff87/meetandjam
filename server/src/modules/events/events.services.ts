@@ -86,11 +86,12 @@ export class EventsService {
     const joinedToEvent = await this.participantRepository.findOne({
       where: { eventId, userId },
     });
-    errorTrigger(!joinedToEvent, "You have already joined this event", 409);
+
+    errorTrigger(!!joinedToEvent, "You have already joined this event", 409);
 
     return await this.participantRepository.save({
-      eventId,
-      userId,
+      eventId: eventId,
+      userId: userId,
     });
   }
 }
