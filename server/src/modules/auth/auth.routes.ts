@@ -11,7 +11,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const parseBody = registerSchema.safeParse(request.body);
 
     if (!parseBody.success) {
-      return sendError(reply, 400, "Validation error", parseBody.error);
+      return sendError(reply, 400, "Validation error");
     }
 
     try {
@@ -30,10 +30,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         },
       });
     } catch (error: any) {
-      if (error.message === "An account with this email is already exists") {
-        return sendError(reply, 409, error.message);
-      }
-      return sendError(reply, 400, error.message);
+      return sendError(reply, error.status || 500, error.message);
     }
   });
 
@@ -42,7 +39,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const parseBody = loginSchema.safeParse(request.body);
 
     if (!parseBody.success) {
-      return sendError(reply, 400, "Validation error", parseBody.error);
+      return sendError(reply, 400, "Validation error");
     }
 
     try {
@@ -61,7 +58,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         },
       });
     } catch (error: any) {
-      return sendError(reply, 401, error.message);
+      return sendError(reply, error.status || 500, error.message);
     }
   });
 
@@ -79,7 +76,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         createdAt: user.createdAt,
       });
     } catch (error: any) {
-      return sendError(reply, 404, error.message);
+      return sendError(reply, error.status || 500, error.message);
     }
   });
 };
