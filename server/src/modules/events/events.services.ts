@@ -53,13 +53,12 @@ export class EventsService {
   async delete(id: string, userId: string) {
     const { event, isOwner, isAdmin } = await checkEventOwnership(id, userId);
 
+    errorTrigger(!event, "Event not found", 404);
     errorTrigger(
       !isOwner && !isAdmin,
       "You don't have access to the action.",
       403,
     );
-
-    errorTrigger(!event, "Event not found", 404);
 
     event && (await this.eventRepository.remove(event));
   }
@@ -76,7 +75,11 @@ export class EventsService {
       .execute();
   }
 
-  async joinEvent(eventId: string, userId: string): Promise<EventParticipant> {
+  async joinEvent(
+    eventId: string,
+    userId: string,
+    operation: "join" | "leave",
+  ): Promise<EventParticipant | { message: string }> {
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
@@ -87,11 +90,23 @@ export class EventsService {
       where: { eventId, userId },
     });
 
-    errorTrigger(!!joinedToEvent, "You have already joined this event", 409);
+    if (operation === "join") {
+      errorTrigger(!!joinedToEvent, "You have already joined this event", 409);
 
-    return await this.participantRepository.save({
-      eventId: eventId,
-      userId: userId,
+      return await this.participantRepository.save({
+        eventId,
+        userId,
+      });
+    }
+
+    // leave
+    errorTrigger(!joinedToEvent, "You haven't joined this event before", 409);
+
+    await this.participantRepository.delete({
+      eventId,
+      userId,
     });
+
+    return { message: "Successfully left the event" };
   }
 }
