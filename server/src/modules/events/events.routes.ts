@@ -21,7 +21,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       );
       return reply.code(201).send(event);
     } catch (error: any) {
-      return sendError(reply, 400, error.message);
+      return sendError(reply, error.status || 500, error.message);
     }
   });
 
@@ -50,8 +50,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         );
         return reply.send(updated);
       } catch (error: any) {
-        const status = error.message === "Event not found" ? 404 : 403;
-        return sendError(reply, status, error.message);
+        return sendError(reply, error.status || 500, error.message);
       }
     },
   );
@@ -67,8 +66,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         await eventsService.delete(id, request.user.sub);
         return reply.code(200).send({ message: "Event deleted" });
       } catch (error: any) {
-        const status = error.message === "Event not found" ? 404 : 403;
-        return sendError(reply, status, error.message);
+        return sendError(reply, error.status || 500, error.message);
       }
     },
   );
@@ -82,22 +80,45 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         await eventsService.deleteAll(request.user.sub);
         return reply.code(200).send({ message: "All events deleted" });
       } catch (error: any) {
-        return sendError(reply, 403, error.message);
+        return sendError(reply, error.status || 500, error.message);
       }
     },
   );
 
+  // JOIN
   app.post(
     "/join",
     { preHandler: [app.authenticate] },
     async (request, reply) => {
       const { eventId } = request.body as { eventId: string };
       const userId = request.user.sub;
+
       try {
-        const participant = await eventsService.joinEvent(eventId, userId);
+        const participant = await eventsService.joinEvent(
+          eventId,
+          userId,
+          "join",
+        );
         return reply.code(201).send(participant);
       } catch (error: any) {
-        return sendError(reply, 400, error.message);
+        return sendError(reply, error.status || 500, error.message);
+      }
+    },
+  );
+
+  // LEAVE
+  app.post(
+    "/leave",
+    { preHandler: [app.authenticate] },
+    async (request, reply) => {
+      const { eventId } = request.body as { eventId: string };
+      const userId = request.user.sub;
+
+      try {
+        const result = await eventsService.joinEvent(eventId, userId, "leave");
+        return reply.code(200).send(result);
+      } catch (error: any) {
+        return sendError(reply, error.status || 500, error.message);
       }
     },
   );
