@@ -4,12 +4,22 @@ import { Event } from "../db/entities/event.entity";
 import { ROLES } from "../types/roles";
 import { FastifyReply } from "fastify";
 
-export const sendError = (
+export const sendBusinessError = (
   reply: FastifyReply,
   status: number,
   message: string,
 ) => {
   return reply.code(status).send({ message });
+};
+
+export const sendValidationError = (reply: FastifyReply, error: any) => {
+  return reply.code(400).send({
+    message: "Validation error",
+    errors: error.issues.map((issue: any) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    })),
+  });
 };
 
 export const checkAdminship = async (userId: string): Promise<boolean> => {
