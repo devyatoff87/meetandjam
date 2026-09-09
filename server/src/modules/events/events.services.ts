@@ -154,12 +154,20 @@ export class EventsService {
       where: { eventId },
       relations: ["user"],
     });
-
     return participants.map((p) => ({
       id: p.user.id,
       name: p.user.name,
       email: p.user.email,
       joinedAt: p.joinedAt,
     }));
+  }
+
+  async findParticipations(userId: string) {
+    const participations = await this.participantRepository.find({
+      where: { userId },
+      relations: ["event"],
+      order: { joinedAt: "DESC" },
+    });
+    return participations.map((p) => p.event);
   }
 }

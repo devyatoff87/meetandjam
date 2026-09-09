@@ -167,7 +167,24 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         const participants = await eventsService.findEventParticipants(id);
         1;
         reply.code(200).send(participants);
-      } catch (error) {}
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
+    },
+  );
+
+  app.post(
+    "/joined",
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const userId = request.user.sub;
+
+      try {
+        const joined = await eventsService.findParticipations(userId);
+        reply.code(200).send(joined);
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
     },
   );
 };
