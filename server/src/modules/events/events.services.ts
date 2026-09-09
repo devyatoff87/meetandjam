@@ -109,4 +109,14 @@ export class EventsService {
 
     return { message: "Successfully left the event" };
   }
+  async getAllByUser(userId: string): Promise<Event[]> {
+    const events = await this.eventRepository.find({
+      where: {
+        ownerId: userId,
+      },
+    });
+    errorTrigger(!events, "This user have not created any events yet", 404);
+
+    return events;
+  }
 }

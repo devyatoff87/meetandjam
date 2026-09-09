@@ -30,6 +30,27 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     return await eventsService.findAll();
   });
 
+  // GET MY EVENTS
+  app.get("/me", { preHandler: [app.authenticate] }, async (request, reply) => {
+    try {
+      const events = await eventsService.getAllByUser(request.user.sub);
+      return reply.code(200).send(events);
+    } catch (error: any) {
+      return sendBusinessError(reply, error.status || 500, error.message);
+    }
+  });
+
+  // GET USERS EVENTS
+  app.get("/:id", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    try {
+      const events = await eventsService.getAllByUser(id);
+      return reply.code(200).send(events);
+    } catch (error: any) {
+      return sendBusinessError(reply, error.status || 500, error.message);
+    }
+  });
+
   // UPDATE
   app.patch(
     "/:id",
