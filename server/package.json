@@ -10,7 +10,8 @@
     "typeorm": "tsx ./node_modules/typeorm/cli.js -d src/db/data-source.ts",
     "migration:generate": "npm run typeorm -- migration:generate src/db/migrations/InitSchema",
     "migration:run": "npm run typeorm -- migration:run",
-    "migration:revert": "npm run typeorm -- migration:revert"
+    "migration:revert": "npm run typeorm -- migration:revert",
+    "seed": "tsx src/seed/run.ts"
   },
   "keywords": [],
   "author": "",
