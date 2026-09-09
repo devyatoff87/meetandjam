@@ -1,4 +1,4 @@
-import { FastifyPluginAsync } from "fastify";
+import { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import { createEventSchema, updateEventSchema } from "./events.schemas";
 import { sendBusinessError, sendValidationError } from "../helpers";
 import { EventsService } from "./events.services";
@@ -155,6 +155,19 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       } catch (error: any) {
         return sendBusinessError(reply, error.status || 500, error.message);
       }
+    },
+  );
+
+  //PARTICIPANTS LIST
+  app.get(
+    "/:id/participants",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.query as { id: string };
+      try {
+        const participants = await eventsService.findEventParticipants(id);
+        1;
+        reply.code(200).send(participants);
+      } catch (error) {}
     },
   );
 };

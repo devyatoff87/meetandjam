@@ -140,4 +140,26 @@ export class EventsService {
 
     return events;
   }
+
+  async findEventParticipants(eventId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+
+    if (!event) {
+      throw { status: 404, message: "Event not found" };
+    }
+
+    const participants = await this.participantRepository.find({
+      where: { eventId },
+      relations: ["user"],
+    });
+
+    return participants.map((p) => ({
+      id: p.user.id,
+      name: p.user.name,
+      email: p.user.email,
+      joinedAt: p.joinedAt,
+    }));
+  }
 }
