@@ -26,8 +26,22 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   });
 
   // GET ALL
-  app.get("/", async () => {
-    return await eventsService.findAll();
+  app.get("/", async (request, reply) => {
+    const query = request.query as {
+      page?: string;
+      limit?: string;
+      search: string;
+    };
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const search = query.search || "";
+
+    try {
+      const filteredEvents = await eventsService.findAll(limit, page, search);
+      reply.code(200).send(filteredEvents);
+    } catch (error: any) {
+      return sendBusinessError(reply, error.status || 500, error.message);
+    }
   });
 
   // GET MY EVENTS

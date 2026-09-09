@@ -15,10 +15,31 @@ export class EventsService {
     return await this.eventRepository.save(event);
   }
 
-  async findAll() {
-    return await this.eventRepository.find({
-      order: { startsAt: "ASC" },
-    });
+  async findAll(limit: number, page: number, search: string = "") {
+    const skip = (page - 1) * limit;
+
+    const query = this.eventRepository.createQueryBuilder("event");
+
+    if (search) {
+      query.andWhere(
+        "event.title ILIKE :search OR event.description ILIKE :search OR event.address ILIKE :search",
+        { search: `%${search}%` },
+      );
+    }
+
+    const [events, total] = await query
+      .orderBy("event.startsAt", "ASC")
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      events,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string, userId: string) {
