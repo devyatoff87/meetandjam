@@ -32,6 +32,12 @@ export const updateEventSchema = z.object({
   donationInfo: z.string().optional(),
 });
 
-export const checkIfUUID = z.object({
+export const uuidSchema = z.object({
   eventId: z.uuid(),
+});
+
+export const allEventsSchema = z.object({
+  limit: z.number().max(25),
+  page: z.number(),
+  search: z.string().optional(),
 });

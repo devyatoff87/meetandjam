@@ -1,12 +1,12 @@
 import { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import {
   createEventSchema,
-  checkIfUUID,
+  uuidSchema,
   updateEventSchema,
+  allEventsSchema,
 } from "./events.schemas";
 import { sendBusinessError, sendValidationError } from "../helpers";
 import { EventsService } from "./events.services";
-import { safeParse, validate } from "zod";
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();
@@ -37,9 +37,13 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       limit?: string;
       search: string;
     };
+
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const search = query.search || "";
+
+    const parseBody = allEventsSchema.safeParse({ page, limit, search });
+    if (!parseBody.success) return sendValidationError(reply, parseBody.error);
 
     try {
       const events = await eventsService.findAll({
@@ -66,6 +70,10 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   // GET USERS EVENTS
   app.get("/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
+    const parseBody = uuidSchema.safeParse({ eventId: id });
+
+    if (!parseBody.success) return sendValidationError(reply, parseBody.error);
+
     try {
       const events = await eventsService.getAllByUser(id);
       return reply.code(200).send(events);
@@ -80,35 +88,23 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     { preHandler: [app.authenticate] },
     async (request, reply) => {
       const { id } = request.params as { id: string };
-      const parseBody = updateEventSchema.safeParse(request.body);
+      const parseIdBody = uuidSchema.safeParse({ eventId: id });
+      const parseEventBody = updateEventSchema.safeParse(request.body);
 
-      if (!parseBody.success) {
-        return sendValidationError(reply, parseBody.error);
+      if (!parseEventBody.success) {
+        return sendValidationError(reply, parseEventBody.error);
+      }
+      if (!parseIdBody.success) {
+        return sendValidationError(reply, parseIdBody.error);
       }
 
       try {
         const updated = await eventsService.update(
           id,
           request.user.sub,
-          parseBody.data,
+          parseEventBody.data,
         );
         return reply.send(updated);
-      } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
-      }
-    },
-  );
-
-  // DELETE ONE
-  app.delete(
-    "/:id",
-    { preHandler: [app.authenticate] },
-    async (request, reply) => {
-      const { id } = request.params as { id: string };
-
-      try {
-        await eventsService.delete(id, request.user.sub);
-        return reply.code(200).send({ message: "Event deleted" });
       } catch (error: any) {
         return sendBusinessError(reply, error.status || 500, error.message);
       }
@@ -129,17 +125,37 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     },
   );
 
+  // DELETE ONE
+  app.delete(
+    "/:id",
+    { preHandler: [app.authenticate] },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const parseBody = uuidSchema.safeParse({ eventId: id });
+
+      if (!parseBody.success)
+        return sendValidationError(reply, parseBody.error);
+
+      try {
+        await eventsService.delete(id, request.user.sub);
+        return reply.code(200).send({ message: "Event deleted" });
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
+    },
+  );
+
   // JOIN
   app.post(
     "/join",
     { preHandler: [app.authenticate] },
     async (request, reply) => {
       const userId = request.user.sub;
-      const parseBody = checkIfUUID.safeParse(request.body);
+      const parseBody = uuidSchema.safeParse(request.body);
       if (!parseBody.success) {
         return sendValidationError(reply, parseBody.error);
       }
-      const { eventId } = request.body as { eventId: string };
+      const { eventId } = parseBody.data;
 
       try {
         const participant = await eventsService.joinEvent(
@@ -160,14 +176,11 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     { preHandler: [app.authenticate] },
     async (request, reply) => {
       const userId = request.user.sub;
-
-      const parseBody = checkIfUUID.safeParse(request.body);
-
-      if (!parseBody.success)
+      const parseBody = uuidSchema.safeParse(request.body);
+      if (!parseBody.success) {
         return sendValidationError(reply, parseBody.error);
-
-      const { eventId } = request.body as { eventId: string };
-
+      }
+      const { eventId } = parseBody.data;
       try {
         const result = await eventsService.joinEvent(eventId, userId, "leave");
         return reply.code(200).send(result);
@@ -182,6 +195,10 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     "/:id/participants",
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { id } = request.params as { id: string };
+      const parseBody = uuidSchema.safeParse({ eventId: id });
+
+      if (!parseBody.success)
+        return sendValidationError(reply, parseBody.error);
 
       try {
         const participants = await eventsService.findParticipants(id);
