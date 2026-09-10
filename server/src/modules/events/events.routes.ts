@@ -4,6 +4,7 @@ import {
   uuidSchema,
   eventIdSchema,
   updateEventSchema,
+  allEventsSchema,
 } from "./events.schemas";
 import {
   sendBusinessError,
@@ -16,77 +17,118 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();
 
   // CREATE
-  app.post("/", { preHandler: [app.authenticate] }, async (request, reply) => {
-    const parseBody = validateZ(createEventSchema, request.body, reply);
-    if (!parseBody) return;
+  app.post(
+    "/",
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        body: createEventSchema,
+      },
+    },
+    async (request, reply) => {
+      const parseBody = validateZ(createEventSchema, request.body, reply);
+      if (!parseBody) return;
 
-    try {
-      const event = await eventsService.create(parseBody, request.user.sub);
-      return reply.code(201).send(event);
-    } catch (error: any) {
-      return sendBusinessError(reply, error.status || 500, error.message);
-    }
-  });
+      try {
+        const event = await eventsService.create(parseBody, request.user.sub);
+        return reply.code(201).send(event);
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
+    },
+  );
 
   // GET ALL
-  app.get("/", async (request, reply) => {
-    const parseQueries = validateEventsQueries(
-      request.query as { page: string; limit: string; search: string },
-      reply,
-    );
-    if (!parseQueries) return;
+  app.get(
+    "/",
+    {
+      schema: {
+        querystring: allEventsSchema,
+      },
+    },
+    async (request, reply) => {
+      const parseQueries = validateEventsQueries(
+        request.query as { page: string; limit: string; search: string },
+        reply,
+      );
+      if (!parseQueries) return;
 
-    try {
-      const events = await eventsService.findAll(parseQueries);
-      reply.code(200).send(events);
-    } catch (error: any) {
-      return sendBusinessError(reply, error.status || 500, error.message);
-    }
-  });
+      try {
+        const events = await eventsService.findAll(parseQueries);
+        reply.code(200).send(events);
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
+    },
+  );
 
   // GET MY EVENTS
-  app.get("/me", { preHandler: [app.authenticate] }, async (request, reply) => {
-    const parseQueries = validateEventsQueries(
-      request.query as { page: string; limit: string; search: string },
-      reply,
-    );
-    if (!parseQueries) return;
-
-    try {
-      const events = await eventsService.getAllByUser(
-        request.user.sub,
-        parseQueries,
+  app.get(
+    "/me",
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        querystring: allEventsSchema,
+      },
+    },
+    async (request, reply) => {
+      const parseQueries = validateEventsQueries(
+        request.query as { page: string; limit: string; search: string },
+        reply,
       );
-      return reply.code(200).send(events);
-    } catch (error: any) {
-      return sendBusinessError(reply, error.status || 500, error.message);
-    }
-  });
+      if (!parseQueries) return;
+
+      try {
+        const events = await eventsService.getAllByUser(
+          request.user.sub,
+          parseQueries,
+        );
+        return reply.code(200).send(events);
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
+    },
+  );
 
   // GET USERS EVENTS
-  app.get("/:id", async (request, reply) => {
-    const parseId = validateZ(uuidSchema, request.params, reply);
-    if (!parseId) return;
-    const { id } = parseId;
+  app.get(
+    "/:id",
+    {
+      schema: {
+        params: uuidSchema,
+        querystring: allEventsSchema,
+      },
+    },
+    async (request, reply) => {
+      const parseId = validateZ(uuidSchema, request.params, reply);
+      if (!parseId) return;
+      const { id } = parseId;
 
-    const parseQueries = validateEventsQueries(
-      request.query as { page: string; limit: string; search: string },
-      reply,
-    );
-    if (!parseQueries) return;
+      const parseQueries = validateEventsQueries(
+        request.query as { page: string; limit: string; search: string },
+        reply,
+      );
+      if (!parseQueries) return;
 
-    try {
-      const events = await eventsService.getAllByUser(id, parseQueries);
-      return reply.code(200).send(events);
-    } catch (error: any) {
-      return sendBusinessError(reply, error.status || 500, error.message);
-    }
-  });
+      try {
+        const events = await eventsService.getAllByUser(id, parseQueries);
+        return reply.code(200).send(events);
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
+    },
+  );
 
   // UPDATE
   app.patch(
     "/:id",
-    { preHandler: [app.authenticate] },
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        params: uuidSchema,
+        body: updateEventSchema,
+      },
+    },
     async (request, reply) => {
       const parseId = validateZ(uuidSchema, request.params, reply);
       if (!parseId) return;
@@ -125,7 +167,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   // DELETE ONE
   app.delete(
     "/:id",
-    { preHandler: [app.authenticate] },
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        params: uuidSchema,
+      },
+    },
     async (request, reply) => {
       const parseId = validateZ(uuidSchema, request.params, reply);
       if (!parseId) return;
@@ -143,7 +190,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   // JOIN
   app.post(
     "/join",
-    { preHandler: [app.authenticate] },
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        body: eventIdSchema,
+      },
+    },
     async (request, reply) => {
       const parseBody = validateZ(eventIdSchema, request.body, reply);
       if (!parseBody) return;
@@ -165,7 +217,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   // LEAVE
   app.post(
     "/leave",
-    { preHandler: [app.authenticate] },
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        body: eventIdSchema,
+      },
+    },
     async (request, reply) => {
       const parseBody = validateZ(eventIdSchema, request.body, reply);
       if (!parseBody) return;
@@ -185,18 +242,26 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // PARTICIPANTS LIST
-  app.get("/:id/participants", async (request, reply) => {
-    const parseId = validateZ(uuidSchema, request.params, reply);
-    if (!parseId) return;
-    const { id } = parseId;
+  app.get(
+    "/:id/participants",
+    {
+      schema: {
+        params: uuidSchema,
+      },
+    },
+    async (request, reply) => {
+      const parseId = validateZ(uuidSchema, request.params, reply);
+      if (!parseId) return;
+      const { id } = parseId;
 
-    try {
-      const participants = await eventsService.findParticipants(id);
-      reply.code(200).send(participants);
-    } catch (error: any) {
-      return sendBusinessError(reply, error.status || 500, error.message);
-    }
-  });
+      try {
+        const participants = await eventsService.findParticipants(id);
+        reply.code(200).send(participants);
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
+    },
+  );
 
   // JOINED EVENTS
   app.get(

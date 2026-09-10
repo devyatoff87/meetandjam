@@ -7,8 +7,18 @@ import { authRoutes } from "./modules/auth/auth.routes";
 import cors from "@fastify/cors";
 import { AppDataSource } from "./db/data-source";
 import { eventsRoutes } from "./modules/events/events.routes";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import {
+  serializerCompiler,
+  validatorCompiler,
+  jsonSchemaTransform,
+} from "fastify-type-provider-zod";
 
 const app = fastify({ logger: true });
+
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
 const start = async () => {
   try {
@@ -20,13 +30,49 @@ const start = async () => {
       allowedHeaders: ["Content-Type", "Authorization"],
     });
 
-    app.decorate("authenticate", async (reqest, reply) => {
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: "MeetAndJam API",
+          description:
+            "API for platform for connecting musicians for jam sessions.",
+          version: "1.0.0",
+        },
+        servers: [
+          {
+            url: "http://localhost:3000",
+            description: "Development server",
+          },
+        ],
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: "http",
+              scheme: "bearer",
+              bearerFormat: "JWT",
+            },
+          },
+        },
+        security: [{ bearerAuth: [] }],
+      },
+      transform: jsonSchemaTransform,
+    });
+
+    await app.register(fastifySwaggerUi, {
+      routePrefix: "/docs",
+      uiConfig: {
+        docExpansion: "list",
+        deepLinking: false,
+      },
+    });
+
+    app.decorate("authenticate", async (request, reply) => {
       try {
-        await reqest.jwtVerify();
+        await request.jwtVerify();
       } catch (error) {
         console.error(error);
         reply.code(401).send({
-          message: "Unauthirized",
+          message: "Unauthorized",
         });
       }
     });
