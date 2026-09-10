@@ -47,10 +47,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseQueries = validateEventsQueries(
-        request.query as { page: string; limit: string; search: string },
-        reply,
-      );
+      const parseQueries = validateEventsQueries(request.query, reply);
       if (!parseQueries) return;
 
       try {
@@ -72,10 +69,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseQueries = validateEventsQueries(
-        request.query as { page: string; limit: string; search: string },
-        reply,
-      );
+      const parseQueries = validateEventsQueries(request.query, reply);
       if (!parseQueries) return;
 
       try {
@@ -104,10 +98,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       if (!parseId) return;
       const { id } = parseId;
 
-      const parseQueries = validateEventsQueries(
-        request.query as { page: string; limit: string; search: string },
-        reply,
-      );
+      const parseQueries = validateEventsQueries(request.query, reply);
       if (!parseQueries) return;
 
       try {
