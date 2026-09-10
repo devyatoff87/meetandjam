@@ -3,6 +3,8 @@ import { User } from "../db/entities/user.entity";
 import { Event } from "../db/entities/event.entity";
 import { ROLES } from "../types/roles";
 import { FastifyReply } from "fastify";
+import { ZodType } from "zod";
+import { allEventsSchema } from "./events/events.schemas";
 
 export const sendBusinessError = (
   reply: FastifyReply,
@@ -52,4 +54,29 @@ export const checkEventOwnership = async (eventId: string, userId: string) => {
   }
 
   return { event, isOwner, isAdmin };
+};
+
+export const validateZ = <T>(
+  schema: ZodType<T>,
+  data: unknown,
+  reply: FastifyReply,
+): T | null => {
+  console.log(data);
+  const result = schema.safeParse(data);
+
+  if (!result.success) {
+    sendValidationError(reply, result.error);
+    return null;
+  }
+
+  return result.data;
+};
+
+export const validateEventsQueries = (
+  query: { page: string; limit: string; search: string },
+  reply: FastifyReply,
+) => {
+  const { page = 1, limit = 10, search = "" } = query;
+
+  return validateZ(allEventsSchema, { page, limit, search }, reply);
 };
