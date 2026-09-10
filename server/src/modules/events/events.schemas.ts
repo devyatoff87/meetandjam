@@ -31,3 +31,7 @@ export const updateEventSchema = z.object({
   isDonationBased: z.boolean().optional(),
   donationInfo: z.string().optional(),
 });
+
+export const checkIfUUID = z.object({
+  eventId: z.uuid(),
+});

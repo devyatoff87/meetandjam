@@ -1,7 +1,12 @@
 import { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
-import { createEventSchema, updateEventSchema } from "./events.schemas";
+import {
+  createEventSchema,
+  checkIfUUID,
+  updateEventSchema,
+} from "./events.schemas";
 import { sendBusinessError, sendValidationError } from "../helpers";
 import { EventsService } from "./events.services";
+import { safeParse, validate } from "zod";
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();
@@ -129,8 +134,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     "/join",
     { preHandler: [app.authenticate] },
     async (request, reply) => {
-      const { eventId } = request.body as { eventId: string };
       const userId = request.user.sub;
+      const parseBody = checkIfUUID.safeParse(request.body);
+      if (!parseBody.success) {
+        return sendValidationError(reply, parseBody.error);
+      }
+      const { eventId } = request.body as { eventId: string };
 
       try {
         const participant = await eventsService.joinEvent(
@@ -150,8 +159,14 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     "/leave",
     { preHandler: [app.authenticate] },
     async (request, reply) => {
-      const { eventId } = request.body as { eventId: string };
       const userId = request.user.sub;
+
+      const parseBody = checkIfUUID.safeParse(request.body);
+
+      if (!parseBody.success)
+        return sendValidationError(reply, parseBody.error);
+
+      const { eventId } = request.body as { eventId: string };
 
       try {
         const result = await eventsService.joinEvent(eventId, userId, "leave");
