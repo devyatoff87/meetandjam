@@ -72,11 +72,6 @@ export const validateZ = <T>(
   return result.data;
 };
 
-export const validateEventsQueries = (
-  query: { page: string; limit: string; search: string },
-  reply: FastifyReply,
-) => {
-  const { page = 1, limit = 10, search = "" } = query;
-
-  return validateZ(allEventsSchema, { page, limit, search }, reply);
+export const validateEventsQueries = (data: unknown, reply: FastifyReply) => {
+  return validateZ(allEventsSchema, data, reply);
 };
