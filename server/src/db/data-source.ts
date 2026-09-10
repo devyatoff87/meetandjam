@@ -4,6 +4,7 @@ import { User } from "./entities/user.entity";
 import { Event } from "./entities/event.entity";
 import { EventParticipant } from "./entities/participant.entity";
 import { Tag } from "./entities/tag.entity";
+import { Category } from "./entities/category.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -17,6 +18,6 @@ export const AppDataSource = new DataSource({
 
   synchronize: false,
   logging: true,
-  entities: [User, Event, EventParticipant, Tag],
+  entities: [User, Event, EventParticipant, Tag, Category],
   migrations: ["dist/db/migrations/**/*.js"],
 });

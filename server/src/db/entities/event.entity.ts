@@ -7,10 +7,12 @@ import {
   ManyToMany,
   JoinTable,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { EventParticipant } from "./participant.entity";
 import { User } from "./user.entity";
 import { Tag } from "./tag.entity";
+import { Category } from "./category.entity";
 
 @Entity("events")
 export class Event {
@@ -64,6 +66,12 @@ export class Event {
   @CreateDateColumn({ type: "timestamptz" })
   createdAt!: Date;
 
-  @CreateDateColumn({ type: "timestamptz" })
+  @UpdateDateColumn({ type: "timestamptz" })
   updatedAt!: Date;
+
+  @ManyToOne(() => Category, { onDelete: "SET NULL" })
+  category!: Category;
+
+  @Column({ type: "uuid", nullable: true })
+  categoryId?: string;
 }
