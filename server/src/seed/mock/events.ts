@@ -1,4 +1,20 @@
-const eventsUserA = [
+import { CategorySlug } from "../../types/categories";
+
+type MockEvent = {
+  title: string;
+  description: string;
+  maxParticipants?: number;
+  address: string;
+  contactInfo?: string;
+  startsAt: string;
+  entryPrice?: number;
+  isDonationBased?: boolean;
+  donationInfo?: string;
+  ownerId: string;
+  categorySlug: CategorySlug;
+};
+
+const eventsUserA: MockEvent[] = [
   {
     title: "Jazz session in Berlin",
     description:
@@ -10,8 +26,8 @@ const eventsUserA = [
     entryPrice: 10,
     isDonationBased: false,
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
-
   {
     title: "Open mic jam session",
     description:
@@ -23,6 +39,7 @@ const eventsUserA = [
     entryPrice: 0,
     isDonationBased: false,
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
   {
     title: "Jazz & wine evening",
@@ -35,6 +52,7 @@ const eventsUserA = [
     entryPrice: 15,
     isDonationBased: false,
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
   {
     title: "Blues jam in Munich",
@@ -48,6 +66,7 @@ const eventsUserA = [
     isDonationBased: true,
     donationInfo: "Donations for the venue are welcome.",
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
   {
     title: "Indie folk night",
@@ -60,6 +79,7 @@ const eventsUserA = [
     entryPrice: 8,
     isDonationBased: false,
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
   {
     title: "Drum circle in the park",
@@ -72,6 +92,7 @@ const eventsUserA = [
     isDonationBased: true,
     donationInfo: "Donations for instruments are welcome.",
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
   {
     title: "Soul & funk jam",
@@ -84,6 +105,7 @@ const eventsUserA = [
     entryPrice: 12,
     isDonationBased: false,
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
   {
     title: "Acoustic guitar circle",
@@ -97,6 +119,7 @@ const eventsUserA = [
     isDonationBased: true,
     donationInfo: "Free event, donations for the host are appreciated.",
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
   {
     title: "Jazz brunch",
@@ -109,6 +132,7 @@ const eventsUserA = [
     entryPrice: 20,
     isDonationBased: false,
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
   {
     title: "Electronic jam session",
@@ -120,10 +144,11 @@ const eventsUserA = [
     entryPrice: 5,
     isDonationBased: false,
     ownerId: "46dcf103-a3ee-456c-9e8b-b938d73fadf8",
+    categorySlug: "jam",
   },
 ];
 
-const eventsUserB = [
+const eventsUserB: MockEvent[] = [
   {
     title: "Köln jazz session",
     description:
@@ -135,6 +160,7 @@ const eventsUserB = [
     entryPrice: 8,
     isDonationBased: false,
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Jazz & poetry night",
@@ -146,6 +172,7 @@ const eventsUserB = [
     entryPrice: 6,
     isDonationBased: false,
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Berlin jam collective",
@@ -158,6 +185,7 @@ const eventsUserB = [
     isDonationBased: true,
     donationInfo: "Pay what you want. Donations support the venue.",
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Hamburg harbor blues",
@@ -170,6 +198,7 @@ const eventsUserB = [
     entryPrice: 10,
     isDonationBased: false,
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Frankfurt jazz & soul",
@@ -182,6 +211,7 @@ const eventsUserB = [
     entryPrice: 12,
     isDonationBased: false,
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Düsseldorf jam session",
@@ -193,6 +223,7 @@ const eventsUserB = [
     entryPrice: 0,
     isDonationBased: false,
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Munich jazz brunch",
@@ -204,6 +235,7 @@ const eventsUserB = [
     entryPrice: 18,
     isDonationBased: false,
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Cologne acoustic night",
@@ -215,6 +247,7 @@ const eventsUserB = [
     entryPrice: 5,
     isDonationBased: false,
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Berlin world music session",
@@ -227,6 +260,7 @@ const eventsUserB = [
     isDonationBased: true,
     donationInfo: "Free entry. Donations encouraged for artists.",
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
   {
     title: "Stuttgart jazz cellar",
@@ -239,10 +273,11 @@ const eventsUserB = [
     entryPrice: 7,
     isDonationBased: false,
     ownerId: "a23e92eb-fbd9-48b7-8323-3e1aaf31b692",
+    categorySlug: "jam",
   },
 ];
 
-const eventsUserC = [
+const eventsUserC: MockEvent[] = [
   {
     title: "Dresden jazz session",
     description: "Live jazz in a beautiful courtyard. Relaxed and intimate.",
@@ -254,6 +289,7 @@ const eventsUserC = [
     isDonationBased: true,
     donationInfo: "Suggested donation: 5 EUR for the band.",
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Nuremberg folk jam",
@@ -265,6 +301,7 @@ const eventsUserC = [
     entryPrice: 0,
     isDonationBased: false,
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Berlin sunset jam",
@@ -278,6 +315,7 @@ const eventsUserC = [
     isDonationBased: true,
     donationInfo: "Donations welcome for future events.",
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Hamburg electronic jam",
@@ -289,6 +327,7 @@ const eventsUserC = [
     entryPrice: 5,
     isDonationBased: false,
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Munich jazz workshop",
@@ -302,6 +341,7 @@ const eventsUserC = [
     isDonationBased: true,
     donationInfo: "Free participation. Donations for instruments.",
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Cologne jam session",
@@ -313,6 +353,7 @@ const eventsUserC = [
     entryPrice: 0,
     isDonationBased: false,
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Leipzig jazz session",
@@ -325,6 +366,7 @@ const eventsUserC = [
     entryPrice: 8,
     isDonationBased: false,
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Düsseldorf acoustic jam",
@@ -338,6 +380,7 @@ const eventsUserC = [
     isDonationBased: true,
     donationInfo: "Pay what you can for the artists.",
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Berlin jazz & art",
@@ -349,6 +392,7 @@ const eventsUserC = [
     entryPrice: 10,
     isDonationBased: false,
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
   {
     title: "Frankfurt open jam",
@@ -360,7 +404,147 @@ const eventsUserC = [
     entryPrice: 0,
     isDonationBased: false,
     ownerId: "9e96402b-f199-4777-8c49-35611acfab3a",
+    categorySlug: "jam",
   },
 ];
 
-export const mockEvents = [...eventsUserA, ...eventsUserB, ...eventsUserC];
+const eventsUserD: MockEvent[] = [
+  {
+    title: "Acoustic jam in Kreuzberg",
+    description:
+      "Bring your guitar, ukulele, or just your voice. Cozy acoustic session for all levels.",
+    maxParticipants: 20,
+    address: "Bergmannstr. 5, 10961 Berlin",
+    contactInfo: "telegram: @acousticjam",
+    startsAt: "2026-09-18T19:00:00+02:00",
+    entryPrice: 0,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "jam",
+  },
+  {
+    title: "Poetry slam open mic",
+    description:
+      "Read your poems or just listen. Supportive atmosphere, no judgment.",
+    maxParticipants: 30,
+    address: "Karl-Marx-Str. 12, 12043 Berlin",
+    contactInfo: "telegram: @poetryslam",
+    startsAt: "2026-09-20T18:30:00+02:00",
+    entryPrice: 5,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "word",
+  },
+  {
+    title: "Improv theater jam",
+    description:
+      "No script, no plan — just play. Come alone or with friends, everyone joins.",
+    maxParticipants: 15,
+    address: "Oranienstr. 45, 10999 Berlin",
+    contactInfo: "email: improv@theater.de",
+    startsAt: "2026-09-24T19:00:00+02:00",
+    entryPrice: 8,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "theater",
+  },
+  {
+    title: "Standup open mic for beginners",
+    description:
+      "First time on stage? This is your chance. 5 minutes, friendly crowd.",
+    maxParticipants: 25,
+    address: "Schönhauser Allee 8, 10119 Berlin",
+    contactInfo: "telegram: @standupberlin",
+    startsAt: "2026-09-28T20:00:00+02:00",
+    entryPrice: 0,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "standup",
+  },
+  {
+    title: "Contact improvisation dance",
+    description:
+      "Explore movement and connection through contact improv. All levels welcome.",
+    maxParticipants: 20,
+    address: "Tempelhofer Feld, 10965 Berlin",
+    contactInfo: "telegram: @danceimprov",
+    startsAt: "2026-10-02T17:00:00+02:00",
+    entryPrice: 0,
+    isDonationBased: true,
+    donationInfo: "Donations for the space are welcome.",
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "dance",
+  },
+  {
+    title: "Jam & art: live painting session",
+    description:
+      "Musicians play, artists paint. Bring your instrument or your brushes.",
+    maxParticipants: 30,
+    address: "Prinzenstr. 12, 10969 Berlin",
+    contactInfo: "email: artjam@berlin.de",
+    startsAt: "2026-10-06T18:00:00+02:00",
+    entryPrice: 10,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "another",
+  },
+  {
+    title: "Storytelling night",
+    description:
+      "Tell a story — real or invented. 7 minutes per person. Listeners welcome.",
+    maxParticipants: 25,
+    address: "Kastanienallee 22, 10435 Berlin",
+    contactInfo: "telegram: @storynight",
+    startsAt: "2026-10-09T19:30:00+02:00",
+    entryPrice: 5,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "word",
+  },
+  {
+    title: "Improv comedy jam",
+    description:
+      "Short-form improv games. Come play or watch. Laughs guaranteed.",
+    maxParticipants: 20,
+    address: "Warschauer Str. 10, 10243 Berlin",
+    contactInfo: "email: comedy@improv.de",
+    startsAt: "2026-10-13T20:00:00+02:00",
+    entryPrice: 7,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "theater",
+  },
+  {
+    title: "Ecstatic dance session",
+    description:
+      "Free-form dance to eclectic music. No steps, no judgment, just movement.",
+    maxParticipants: 35,
+    address: "Holzmarktstr. 25, 10243 Berlin",
+    contactInfo: "telegram: @ecstaticdance",
+    startsAt: "2026-10-17T19:00:00+02:00",
+    entryPrice: 12,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "dance",
+  },
+  {
+    title: "Standup comedy night",
+    description:
+      "Experienced comedians and new faces. 10 minutes each. Come laugh.",
+    maxParticipants: 50,
+    address: "Friedrichstr. 100, 10117 Berlin",
+    contactInfo: "email: comedy@standup.de",
+    startsAt: "2026-10-21T20:30:00+02:00",
+    entryPrice: 15,
+    isDonationBased: false,
+    ownerId: "784d4c9d-73e0-4286-bc32-4887912187e2",
+    categorySlug: "standup",
+  },
+];
+
+export const mockEvents = [
+  ...eventsUserA,
+  ...eventsUserB,
+  ...eventsUserC,
+  ...eventsUserD,
+];
