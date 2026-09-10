@@ -33,15 +33,10 @@ export const checkAdminship = async (userId: string): Promise<boolean> => {
   return user?.role === ROLES.ADMIN;
 };
 
-export const checkEventOwnership = async (
-  eventId: string,
-  userId: string,
-): Promise<{ event: Event | null; isOwner: boolean; isAdmin: boolean }> => {
+export const checkEventOwnership = async (eventId: string, userId: string) => {
   const eventRepository = AppDataSource.getRepository(Event);
-
   const event = await eventRepository.findOne({
     where: { id: eventId },
-    select: ["id", "ownerId"],
   });
 
   if (!event) {
@@ -51,21 +46,10 @@ export const checkEventOwnership = async (
   const isOwner = event.ownerId === userId;
 
   let isAdmin = false;
+
   if (!isOwner) {
     isAdmin = await checkAdminship(userId);
   }
 
   return { event, isOwner, isAdmin };
 };
-
-export function errorTrigger(
-  condition: boolean,
-  message: string,
-  status: number,
-) {
-  if (condition)
-    throw {
-      message: message,
-      status: status,
-    };
-}
