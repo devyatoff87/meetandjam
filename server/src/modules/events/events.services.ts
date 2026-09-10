@@ -2,6 +2,7 @@ import { AppDataSource } from "../../db/data-source";
 import { Category } from "../../db/entities/category.entity";
 import { Event } from "../../db/entities/event.entity";
 import { EventParticipant } from "../../db/entities/participant.entity";
+import { CategorySlug } from "../../types/categories";
 import { checkAdminship, checkEventOwnership } from "../helpers";
 
 const eventErrors = {
@@ -39,12 +40,21 @@ export class EventsService {
     return await this.eventRepository.save(event);
   }
 
-  async findAll(options: { limit: number; page: number; search?: string }) {
-    const { limit, page, search = "" } = options;
-
+  async findAll(options: {
+    limit: number;
+    page: number;
+    search?: string;
+    category?: CategorySlug;
+  }) {
+    const { limit, page, search = "", category } = options;
     const skip = (page - 1) * limit;
 
     const query = this.eventRepository.createQueryBuilder("event");
+
+    if (category) {
+      query.leftJoin("event.category", "category");
+      query.andWhere("category.slug = :category", { category });
+    }
 
     if (search) {
       query.andWhere(
@@ -59,13 +69,7 @@ export class EventsService {
       .take(limit)
       .getManyAndCount();
 
-    return {
-      events,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    };
+    return { events, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async findOne(id: string, userId: string) {

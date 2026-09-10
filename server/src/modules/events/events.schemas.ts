@@ -19,7 +19,7 @@ export const createEventSchema = z.object({
   entryPrice: z.number().max(255).optional(),
   isDonationBased: z.boolean().default(false).optional(),
   donationInfo: z.string().optional(),
-  categorySlug: z.enum(CATEGORY_SLUGS),
+  category: z.enum(CATEGORY_SLUGS),
 });
 
 export const updateEventSchema = z.object({
@@ -32,6 +32,7 @@ export const updateEventSchema = z.object({
   entryPrice: z.number().max(255).optional(),
   isDonationBased: z.boolean().optional(),
   donationInfo: z.string().optional(),
+  category: z.enum(CATEGORY_SLUGS).optional(),
 });
 
 const uuidField = z.string().uuid({ message: "Invalid UUID format" });
@@ -48,4 +49,5 @@ export const allEventsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(10),
   search: z.string().optional().default(""),
+  category: z.enum(CATEGORY_SLUGS).optional(),
 });
