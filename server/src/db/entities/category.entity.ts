@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Event } from "./event.entity";
+import { CategorySlug } from "../../types/categories";
 
 @Entity("categories")
 export class Category {
@@ -16,7 +17,7 @@ export class Category {
   name!: string;
 
   @Column({ type: "varchar", length: 100, unique: true })
-  slug!: string;
+  slug!: CategorySlug;
 
   @Column({ type: "text", nullable: true })
   description?: string;
