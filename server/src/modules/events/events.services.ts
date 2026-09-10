@@ -131,17 +131,37 @@ export class EventsService {
     return { message: "Successfully left the event" };
   }
 
-  async getAllByUser(userId: string): Promise<Event[]> {
-    const events = await this.eventRepository.find({
-      where: {
-        ownerId: userId,
-      },
-    });
-    if (events.length === 0) {
-      return [];
+  async getAllByUser(
+    userId: string,
+    options: { page?: number; limit?: number; search?: string },
+  ) {
+    const { limit = 10, page = 1, search = "" } = options;
+    const skip = (page - 1) * limit;
+
+    const query = this.eventRepository
+      .createQueryBuilder("event")
+      .where("event.ownerId = :userId", { userId });
+
+    if (search) {
+      query.andWhere(
+        "event.title ILIKE :search OR event.description ILIKE :search OR event.address ILIKE :search",
+        { search: `%${search}%` },
+      );
     }
 
-    return events;
+    const [events, total] = await query
+      .orderBy("event.startsAt", "ASC")
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      events,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findParticipants(eventId: string) {
