@@ -37,8 +37,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     const search = query.search || "";
 
     try {
-      const filteredEvents = await eventsService.findAll(limit, page, search);
-      reply.code(200).send(filteredEvents);
+      const events = await eventsService.findAll({
+        limit,
+        page,
+        search,
+      });
+      reply.code(200).send(events);
     } catch (error: any) {
       return sendBusinessError(reply, error.status || 500, error.message);
     }
@@ -162,10 +166,10 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   app.get(
     "/:id/participants",
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { id } = request.query as { id: string };
+      const { id } = request.params as { id: string };
+
       try {
-        const participants = await eventsService.findEventParticipants(id);
-        1;
+        const participants = await eventsService.findParticipants(id);
         reply.code(200).send(participants);
       } catch (error: any) {
         return sendBusinessError(reply, error.status || 500, error.message);
@@ -173,7 +177,8 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.post(
+  //JOINED EVENTS
+  app.get(
     "/joined",
     { preHandler: [app.authenticate] },
     async (request: FastifyRequest, reply: FastifyReply) => {
