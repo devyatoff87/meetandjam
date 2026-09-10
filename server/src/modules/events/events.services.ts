@@ -3,16 +3,14 @@ import { Event } from "../../db/entities/event.entity";
 import { EventParticipant } from "../../db/entities/participant.entity";
 import { checkAdminship, checkEventOwnership } from "../helpers";
 
-const eventErros = {
+const eventErrors = {
   notFound: { status: 404, message: "Event not found" },
   accessDenied: {
     status: 403,
-    message: "I don't have access for this operation",
+    message: "You don't have access for this operation",
   },
-  conflict: {
-    status: 409,
-    message: "I don't have access for this operation",
-  },
+  alreadyJoined: { status: 409, message: "You have already joined this event" },
+  notJoined: { status: 409, message: "You haven't joined this event before" },
 } as const;
 
 export class EventsService {
@@ -59,8 +57,8 @@ export class EventsService {
   async findOne(id: string, userId: string) {
     const { event, isOwner, isAdmin } = await checkEventOwnership(id, userId);
 
-    if (!event) throw eventErros.notFound;
-    if (!isOwner && !isAdmin) throw eventErros.accessDenied;
+    if (!event) throw eventErrors.notFound;
+    if (!isOwner && !isAdmin) throw eventErrors.accessDenied;
 
     return event;
   }
@@ -68,8 +66,8 @@ export class EventsService {
   async update(id: string, userId: string, data: any) {
     const { event, isOwner } = await checkEventOwnership(id, userId);
 
-    if (!event) throw eventErros.notFound;
-    if (!isOwner) throw eventErros.accessDenied;
+    if (!event) throw eventErrors.notFound;
+    if (!isOwner) throw eventErrors.accessDenied;
 
     return await this.eventRepository.save({
       ...event,
@@ -80,7 +78,7 @@ export class EventsService {
   async deleteAll(userId: string) {
     const isAdmin = await checkAdminship(userId);
 
-    if (!isAdmin) throw eventErros.accessDenied;
+    if (!isAdmin) throw eventErrors.accessDenied;
 
     await this.eventRepository
       .createQueryBuilder()
@@ -92,8 +90,8 @@ export class EventsService {
   async delete(id: string, userId: string) {
     const { event, isOwner, isAdmin } = await checkEventOwnership(id, userId);
 
-    if (!event) throw eventErros.notFound;
-    if (!isOwner && !isAdmin) throw eventErros.accessDenied;
+    if (!event) throw eventErrors.notFound;
+    if (!isOwner && !isAdmin) throw eventErrors.accessDenied;
 
     event && (await this.eventRepository.remove(event));
   }
@@ -107,15 +105,14 @@ export class EventsService {
       where: { id: eventId },
     });
 
-    if (!event) throw eventErros.notFound;
+    if (!event) throw eventErrors.notFound;
 
     const joinedToEvent = await this.participantRepository.findOne({
       where: { eventId, userId },
     });
 
     if (operation === "join") {
-      if (!!joinedToEvent)
-        throw { status: 409, message: "You have already joined the event." };
+      if (!!joinedToEvent) throw eventErrors.alreadyJoined;
 
       return await this.participantRepository.save({
         eventId,
@@ -124,8 +121,7 @@ export class EventsService {
     }
 
     // leave
-    if (!joinedToEvent)
-      throw { status: 409, message: "You haven't joined this event before" };
+    if (!joinedToEvent) throw eventErrors.notJoined;
 
     await this.participantRepository.delete({
       eventId,
@@ -154,7 +150,7 @@ export class EventsService {
     });
 
     if (!event) {
-      throw eventErros.notFound;
+      throw eventErrors.notFound;
     }
 
     const participants = await this.participantRepository.find({
