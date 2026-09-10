@@ -1,10 +1,12 @@
 import { AppDataSource } from "../../db/data-source";
+import { Category } from "../../db/entities/category.entity";
 import { Event } from "../../db/entities/event.entity";
 import { EventParticipant } from "../../db/entities/participant.entity";
 import { checkAdminship, checkEventOwnership } from "../helpers";
 
 const eventErrors = {
-  notFound: { status: 404, message: "Event not found" },
+  eventNotFound: { status: 404, message: "Event not found" },
+  categoryNotFound: { status: 404, message: "Category not found" },
   accessDenied: {
     status: 403,
     message: "You don't have access for this operation",
@@ -16,10 +18,22 @@ const eventErrors = {
 export class EventsService {
   private eventRepository = AppDataSource.getRepository(Event);
   private participantRepository = AppDataSource.getRepository(EventParticipant);
+  private categoryRepository = AppDataSource.getRepository(Category);
 
   async create(data: any, ownerId: string) {
+    const { categorySlug, ...rest } = data;
+
+    const category = await this.categoryRepository.findOne({
+      where: { slug: categorySlug },
+    });
+
+    if (!category) {
+      throw eventErrors.categoryNotFound;
+    }
+
     const event = this.eventRepository.create({
-      ...data,
+      ...rest,
+      categoryId: category.id,
       ownerId,
     });
     return await this.eventRepository.save(event);
@@ -57,7 +71,7 @@ export class EventsService {
   async findOne(id: string, userId: string) {
     const { event, isOwner, isAdmin } = await checkEventOwnership(id, userId);
 
-    if (!event) throw eventErrors.notFound;
+    if (!event) throw eventErrors.eventNotFound;
     if (!isOwner && !isAdmin) throw eventErrors.accessDenied;
 
     return event;
@@ -66,12 +80,26 @@ export class EventsService {
   async update(id: string, userId: string, data: any) {
     const { event, isOwner } = await checkEventOwnership(id, userId);
 
-    if (!event) throw eventErrors.notFound;
+    if (!event) throw eventErrors.eventNotFound;
     if (!isOwner) throw eventErrors.accessDenied;
+
+    const { categorySlug, ...rest } = data;
+
+    if (categorySlug) {
+      const category = await this.categoryRepository.findOne({
+        where: { slug: categorySlug },
+      });
+
+      if (!category) {
+        throw eventErrors.categoryNotFound;
+      }
+
+      event.categoryId = category.id;
+    }
 
     return await this.eventRepository.save({
       ...event,
-      ...data,
+      ...rest,
     });
   }
 
@@ -90,7 +118,7 @@ export class EventsService {
   async delete(id: string, userId: string) {
     const { event, isOwner, isAdmin } = await checkEventOwnership(id, userId);
 
-    if (!event) throw eventErrors.notFound;
+    if (!event) throw eventErrors.eventNotFound;
     if (!isOwner && !isAdmin) throw eventErrors.accessDenied;
 
     event && (await this.eventRepository.remove(event));
@@ -105,7 +133,7 @@ export class EventsService {
       where: { id: eventId },
     });
 
-    if (!event) throw eventErrors.notFound;
+    if (!event) throw eventErrors.eventNotFound;
 
     const joinedToEvent = await this.participantRepository.findOne({
       where: { eventId, userId },
@@ -170,7 +198,7 @@ export class EventsService {
     });
 
     if (!event) {
-      throw eventErrors.notFound;
+      throw eventErrors.eventNotFound;
     }
 
     const participants = await this.participantRepository.find({

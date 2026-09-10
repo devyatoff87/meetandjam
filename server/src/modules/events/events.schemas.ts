@@ -1,4 +1,5 @@
 import z from "zod";
+import { CATEGORY_SLUGS } from "../../types/categories";
 
 const startsAt = z
   .string()
@@ -18,6 +19,7 @@ export const createEventSchema = z.object({
   entryPrice: z.number().max(255).optional(),
   isDonationBased: z.boolean().default(false).optional(),
   donationInfo: z.string().optional(),
+  categorySlug: z.enum(CATEGORY_SLUGS),
 });
 
 export const updateEventSchema = z.object({
