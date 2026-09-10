@@ -3,6 +3,10 @@ import { User } from "../../db/entities/user.entity";
 import { LoginInput, RegisterInput } from "./auth.schemas";
 import argon2 from "argon2";
 
+const authErrors = {
+  notFound: { status: 404, message: "User not found" },
+} as const;
+
 export default class AuthService {
   constructor(private userRepository = AppDataSource.getRepository(User)) {}
 
@@ -13,7 +17,10 @@ export default class AuthService {
       where: { email },
     });
     if (existingUser)
-      throw new Error("An account with this email is already exists");
+      throw {
+        status: 409,
+        message: "An account with this email already exists",
+      };
 
     const passwordHash = await argon2.hash(password);
     const user = this.userRepository.create({ email, passwordHash, name });
@@ -26,27 +33,23 @@ export default class AuthService {
 
     const user = await this.userRepository.findOne({ where: { email } });
 
-    if (!user) {
-      throw new Error("Either email or password is not correct. Please retry");
-    }
+    if (!user) throw authErrors.notFound;
 
     const isPasswordValid = await argon2.verify(user.passwordHash, password);
 
-    if (!isPasswordValid) {
-      throw new Error("Login or password is not correct");
-    }
+    if (!isPasswordValid)
+      throw { status: 401, message: "Invalid email or password" };
     return user;
   }
 
+  //ME (AUTHERIZED USER)
   async me(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: ["id", "email", "name", "createdAt", "updatedAt"],
     });
 
-    if (!user) {
-      throw new Error("User could not be found");
-    }
+    if (!user) if (!user) throw authErrors.notFound;
     return user;
   }
 }
