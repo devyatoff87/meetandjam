@@ -32,12 +32,18 @@ export const updateEventSchema = z.object({
   donationInfo: z.string().optional(),
 });
 
+const uuidField = z.string().uuid({ message: "Invalid UUID format" });
+
 export const uuidSchema = z.object({
-  eventId: z.uuid(),
+  id: uuidField,
+});
+
+export const eventIdSchema = z.object({
+  eventId: uuidField,
 });
 
 export const allEventsSchema = z.object({
-  limit: z.number().max(25),
-  page: z.number(),
-  search: z.string().optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  search: z.string().optional().default(""),
 });
