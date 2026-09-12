@@ -13,8 +13,8 @@ import {
   joinedEventsResponseSchema,
 } from "./events.schemas";
 import { EventsService } from "./events.services";
-import { validateEventsQueries, validateZ } from '../helpers/validations';
-import { sendBusinessError } from '../helpers/errors';
+import { validateEventsQueries, validateZ } from "../helpers/validations";
+import { sendBusinessError } from "../helpers/errors";
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();
@@ -39,7 +39,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         const event = await eventsService.create(parseBody, request.user.sub);
         return reply.code(201).send(event);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -63,7 +68,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         const events = await eventsService.findAll(parseQueries);
         reply.code(200).send(events);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -91,7 +101,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         );
         return reply.code(200).send(events);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -116,7 +131,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         const event = await eventsService.findOne(id, request.user?.sub || "");
         return reply.code(200).send(event);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -145,7 +165,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         const events = await eventsService.getAllByUser(id, parseQueries);
         return reply.code(200).send(events);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -178,7 +203,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         );
         return reply.send(updated);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -199,7 +229,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         await eventsService.deleteAll(request.user.sub);
         return reply.code(200).send({ message: "All events deleted" });
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -225,7 +260,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         await eventsService.delete(id, request.user.sub);
         return reply.code(200).send({ message: "Event deleted" });
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -255,7 +295,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         );
         return reply.code(201).send(participant);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -285,7 +330,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         );
         return reply.code(200).send(result);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -310,7 +360,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         const participants = await eventsService.findParticipants(id);
         reply.code(200).send(participants);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -333,7 +388,12 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
         const joined = await eventsService.findParticipations(userId);
         reply.code(200).send(joined);
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );

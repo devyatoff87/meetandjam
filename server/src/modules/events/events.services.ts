@@ -9,14 +9,31 @@ import {
 } from "../helpers/check.credentials";
 
 const eventErrors = {
-  eventNotFound: { status: 404, message: "Event not found" },
-  categoryNotFound: { status: 404, message: "Category not found" },
+  eventNotFound: {
+    status: 404,
+    code: "EVENT_NOT_FOUND",
+    message: "Event not found",
+  },
+  categoryNotFound: {
+    status: 404,
+    code: "CATEGORY_NOT_FOUND",
+    message: "Category not found",
+  },
   accessDenied: {
     status: 403,
+    code: "FORBIDDEN",
     message: "You don't have access for this operation",
   },
-  alreadyJoined: { status: 409, message: "You have already joined this event" },
-  notJoined: { status: 409, message: "You haven't joined this event before" },
+  alreadyJoined: {
+    status: 409,
+    code: "ALREADY_JOINED",
+    message: "You have already joined this event",
+  },
+  notJoined: {
+    status: 409,
+    code: "NOT_JOINED",
+    message: "You haven't joined this event before",
+  },
 } as const;
 
 export class EventsService {
