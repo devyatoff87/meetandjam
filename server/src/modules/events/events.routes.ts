@@ -5,6 +5,12 @@ import {
   eventIdSchema,
   updateEventSchema,
   allEventsSchema,
+  eventsListResponseSchema,
+  eventResponseSchema,
+  messageResponseSchema,
+  participantResponseSchema,
+  participantsListResponseSchema,
+  joinedEventsResponseSchema,
 } from "./events.schemas";
 import {
   sendBusinessError,
@@ -23,6 +29,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         body: createEventSchema,
+        response: {
+          201: eventResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -44,6 +53,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     {
       schema: {
         querystring: allEventsSchema,
+        response: {
+          200: eventsListResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -66,6 +78,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         querystring: allEventsSchema,
+        response: {
+          200: eventsListResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -84,13 +99,41 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     },
   );
 
-  // GET USERS EVENTS
+  // GET ONE EVENT
   app.get(
     "/:id",
     {
       schema: {
         params: uuidSchema,
+        response: {
+          200: eventResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const parseId = validateZ(uuidSchema, request.params, reply);
+      if (!parseId) return;
+      const { id } = parseId;
+
+      try {
+        const event = await eventsService.findOne(id, request.user?.sub || "");
+        return reply.code(200).send(event);
+      } catch (error: any) {
+        return sendBusinessError(reply, error.status || 500, error.message);
+      }
+    },
+  );
+
+  //GET USERS EVENTS
+  app.get(
+    "/user/:userId",
+    {
+      schema: {
+        params: uuidSchema,
         querystring: allEventsSchema,
+        response: {
+          200: eventsListResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -109,7 +152,6 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       }
     },
   );
-
   // UPDATE
   app.patch(
     "/:id",
@@ -118,6 +160,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       schema: {
         params: uuidSchema,
         body: updateEventSchema,
+        response: {
+          200: eventResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -144,7 +189,14 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   // DELETE ALL
   app.delete(
     "/all",
-    { preHandler: [app.authenticate] },
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        response: {
+          200: messageResponseSchema,
+        },
+      },
+    },
     async (request, reply) => {
       try {
         await eventsService.deleteAll(request.user.sub);
@@ -162,6 +214,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         params: uuidSchema,
+        response: {
+          200: messageResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -185,6 +240,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         body: eventIdSchema,
+        response: {
+          201: participantResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -212,6 +270,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         body: eventIdSchema,
+        response: {
+          200: messageResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -238,6 +299,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     {
       schema: {
         params: uuidSchema,
+        response: {
+          200: participantsListResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -257,7 +321,14 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   // JOINED EVENTS
   app.get(
     "/joined",
-    { preHandler: [app.authenticate] },
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        response: {
+          200: joinedEventsResponseSchema,
+        },
+      },
+    },
     async (request, reply) => {
       const userId = request.user.sub;
 
