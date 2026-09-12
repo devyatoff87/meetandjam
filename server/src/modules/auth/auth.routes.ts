@@ -5,7 +5,10 @@ import {
   meResponseSchema,
   registerSchema,
 } from "./auth.schemas";
-import { sendBusinessError, sendValidationError } from "../helpers";
+import {
+  sendBusinessError,
+  sendValidationError,
+} from "../helpers/check.credentials";
 import AuthService from "./auth.service";
 
 export const authRoutes: FastifyPluginAsync = async (app) => {

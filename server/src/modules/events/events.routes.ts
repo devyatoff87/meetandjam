@@ -12,12 +12,9 @@ import {
   participantsListResponseSchema,
   joinedEventsResponseSchema,
 } from "./events.schemas";
-import {
-  sendBusinessError,
-  validateEventsQueries,
-  validateZ,
-} from "../helpers";
 import { EventsService } from "./events.services";
+import { validateEventsQueries, validateZ } from '../helpers/validations';
+import { sendBusinessError } from '../helpers/errors';
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();

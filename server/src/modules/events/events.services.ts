@@ -3,7 +3,10 @@ import { Category } from "../../db/entities/category.entity";
 import { Event } from "../../db/entities/event.entity";
 import { EventParticipant } from "../../db/entities/participant.entity";
 import { CategorySlug } from "../../types/categories";
-import { checkAdminship, checkEventOwnership } from "../helpers";
+import {
+  checkAdminship,
+  checkEventOwnership,
+} from "../helpers/check.credentials";
 
 const eventErrors = {
   eventNotFound: { status: 404, message: "Event not found" },
