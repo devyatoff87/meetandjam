@@ -1,5 +1,10 @@
 import { FastifyPluginAsync } from "fastify";
-import { loginSchema, registerSchema } from "./auth.schemas";
+import {
+  authResponseSchema,
+  loginSchema,
+  meResponseSchema,
+  registerSchema,
+} from "./auth.schemas";
 import { sendBusinessError, sendValidationError } from "../helpers";
 import AuthService from "./auth.service";
 
@@ -12,6 +17,9 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     {
       schema: {
         body: registerSchema,
+        response: {
+          201: authResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -48,6 +56,9 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     {
       schema: {
         body: loginSchema,
+        response: {
+          200: authResponseSchema,
+        },
       },
     },
     async (request, reply) => {
@@ -83,6 +94,11 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     "/me",
     {
       preHandler: [app.authenticate],
+      schema: {
+        response: {
+          200: meResponseSchema,
+        },
+      },
     },
     async (request, reply) => {
       const userId = request.user.sub;
