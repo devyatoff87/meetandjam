@@ -70,8 +70,9 @@ const start = async () => {
       try {
         await request.jwtVerify();
       } catch (error) {
-        console.error(error);
         reply.code(401).send({
+          status: 401,
+          code: "UNAUTHORIZED",
           message: "Unauthorized",
         });
       }

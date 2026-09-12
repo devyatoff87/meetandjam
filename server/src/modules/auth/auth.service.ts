@@ -4,7 +4,21 @@ import { LoginInput, RegisterInput } from "./auth.schemas";
 import argon2 from "argon2";
 
 const authErrors = {
-  notFound: { status: 404, message: "User not found" },
+  emailAlreadyExists: {
+    status: 409,
+    code: "EMAIL_ALREADY_EXISTS",
+    message: "An account with this email already exists",
+  },
+  invalidCredentials: {
+    status: 401,
+    code: "INVALID_CREDENTIALS",
+    message: "Invalid email or password",
+  },
+  userNotFound: {
+    status: 404,
+    code: "USER_NOT_FOUND",
+    message: "User not found",
+  },
 } as const;
 
 export default class AuthService {
@@ -33,7 +47,7 @@ export default class AuthService {
 
     const user = await this.userRepository.findOne({ where: { email } });
 
-    if (!user) throw authErrors.notFound;
+    if (!user) throw authErrors.userNotFound;
 
     const isPasswordValid = await argon2.verify(user.passwordHash, password);
 
@@ -49,7 +63,7 @@ export default class AuthService {
       select: ["id", "email", "name", "createdAt", "updatedAt"],
     });
 
-    if (!user) if (!user) throw authErrors.notFound;
+    if (!user) if (!user) throw authErrors.userNotFound;
     return user;
   }
 }

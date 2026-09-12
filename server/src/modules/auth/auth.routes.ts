@@ -5,11 +5,9 @@ import {
   meResponseSchema,
   registerSchema,
 } from "./auth.schemas";
-import {
-  sendBusinessError,
-  sendValidationError,
-} from "../helpers/check.credentials";
+import {} from "../helpers/check.credentials";
 import AuthService from "./auth.service";
+import { sendBusinessError, sendValidationError } from "../helpers/errors";
 
 export const authRoutes: FastifyPluginAsync = async (app) => {
   const authService = new AuthService();
@@ -48,7 +46,12 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
           },
         });
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -87,7 +90,12 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
           },
         });
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
@@ -116,7 +124,12 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
           createdAt: user.createdAt,
         });
       } catch (error: any) {
-        return sendBusinessError(reply, error.status || 500, error.message);
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
       }
     },
   );
