@@ -1,4 +1,4 @@
-import fastify from "fastify";
+import fastify, { FastifyError } from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import "dotenv/config";
 import "reflect-metadata";
@@ -14,6 +14,7 @@ import {
   validatorCompiler,
   jsonSchemaTransform,
 } from "fastify-type-provider-zod";
+import { AppError } from "./types/errors";
 
 const app = fastify({ logger: true });
 
@@ -28,6 +29,52 @@ const start = async () => {
       origin: true,
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
+    });
+
+    app.setErrorHandler((error: AppError, request, reply) => {
+      if (error.status && error.code) {
+        return reply.code(error.status).send({
+          status: error.status,
+          code: error.code,
+          message: error.message,
+        });
+      }
+
+      if (error.code === "FST_ERR_VALIDATION") {
+        return reply.code(400).send({
+          status: 400,
+          code: "VALIDATION_ERROR",
+          message: "Validation failed",
+          details:
+            error.validation?.map((v) => ({
+              path: v.instancePath.replace(/^\//, "").split("/"),
+              message: v.message,
+            })) ?? [],
+        });
+      }
+
+      if (error.code === "FST_ERR_CTP_INVALID_JSON_BODY") {
+        return reply.code(400).send({
+          status: 400,
+          code: "INVALID_JSON",
+          message: "Body is not valid JSON",
+        });
+      }
+
+      if (error.code === "FST_ERR_CTP_INVALID_MEDIA_TYPE") {
+        return reply.code(415).send({
+          status: 415,
+          code: "INVALID_MEDIA_TYPE",
+          message: "Unsupported media type",
+        });
+      }
+
+      request.log.error(error);
+      return reply.code(500).send({
+        status: 500,
+        code: "INTERNAL_ERROR",
+        message: "Internal server error",
+      });
     });
 
     await app.register(fastifySwagger, {
