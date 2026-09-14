@@ -78,7 +78,14 @@ export class EventsService {
 
     const saved = await this.eventRepository.save(event);
 
-    return this.toResponse({ ...saved[0], category: found });
+    const full = await this.eventRepository.findOne({
+      where: { id: saved[0].id },
+      relations: ["category"],
+    });
+
+    if (!full) throw eventErrors.eventNotFound;
+
+    return this.toResponse(full);
   }
 
   async findAll(options: {
