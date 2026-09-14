@@ -3,6 +3,7 @@ import { Category } from "../../db/entities/category.entity";
 import { Event } from "../../db/entities/event.entity";
 import { EventParticipant } from "../../db/entities/participant.entity";
 import { CategorySlug } from "../../types/categories";
+import { EventResponse } from "../../types/event";
 import {
   checkAdminship,
   checkEventOwnership,
@@ -41,23 +42,43 @@ export class EventsService {
   private participantRepository = AppDataSource.getRepository(EventParticipant);
   private categoryRepository = AppDataSource.getRepository(Category);
 
-  async create(data: any, ownerId: string) {
-    const { categorySlug, ...rest } = data;
+  private toResponse(event: Event): EventResponse {
+    return {
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      maxParticipants: event.maxParticipants ?? null,
+      contactInfo: event.contactInfo ?? null,
+      entryPrice: event.entryPrice ?? null,
+      isDonationBased: event.isDonationBased ?? false,
+      donationInfo: event.donationInfo ?? null,
+      address: event.address,
+      startsAt: event.startsAt.toISOString(),
+      category: (event.category?.slug as CategorySlug) ?? null,
+      ownerId: event.ownerId,
+      createdAt: event.createdAt.toISOString(),
+      updatedAt: event.updatedAt.toISOString(),
+    };
+  }
 
-    const category = await this.categoryRepository.findOne({
-      where: { slug: categorySlug },
+  async create(data: any, ownerId: string) {
+    const { category, ...rest } = data;
+
+    const found = await this.categoryRepository.findOne({
+      where: { slug: category },
     });
 
-    if (!category) {
-      throw eventErrors.categoryNotFound;
-    }
+    if (!found) throw eventErrors.categoryNotFound;
 
     const event = this.eventRepository.create({
       ...rest,
-      categoryId: category.id,
+      categoryId: found.id,
       ownerId,
     });
-    return await this.eventRepository.save(event);
+
+    const saved = await this.eventRepository.save(event);
+
+    return this.toResponse({ ...saved[0], category: found });
   }
 
   async findAll(options: {
@@ -69,10 +90,11 @@ export class EventsService {
     const { limit, page, search = "", category } = options;
     const skip = (page - 1) * limit;
 
-    const query = this.eventRepository.createQueryBuilder("event");
+    const query = this.eventRepository
+      .createQueryBuilder("event")
+      .leftJoinAndSelect("event.category", "category");
 
     if (category) {
-      query.leftJoin("event.category", "category");
       query.andWhere("category.slug = :category", { category });
     }
 
@@ -89,7 +111,13 @@ export class EventsService {
       .take(limit)
       .getManyAndCount();
 
-    return { events, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return {
+      events: events.map((e) => this.toResponse(e)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string, userId: string) {
@@ -98,7 +126,14 @@ export class EventsService {
     if (!event) throw eventErrors.eventNotFound;
     if (!isOwner && !isAdmin) throw eventErrors.accessDenied;
 
-    return event;
+    const full = await this.eventRepository.findOne({
+      where: { id },
+      relations: ["category"],
+    });
+
+    if (!full) throw eventErrors.eventNotFound;
+
+    return this.toResponse(full);
   }
 
   async update(id: string, userId: string, data: any) {
@@ -121,10 +156,19 @@ export class EventsService {
       event.categoryId = category.id;
     }
 
-    return await this.eventRepository.save({
+    const saved = await this.eventRepository.save({
       ...event,
       ...rest,
     });
+
+    const full = await this.eventRepository.findOne({
+      where: { id: saved.id },
+      relations: ["category"],
+    });
+
+    if (!full) throw eventErrors.eventNotFound;
+
+    return this.toResponse(full);
   }
 
   async deleteAll(userId: string) {
@@ -172,7 +216,6 @@ export class EventsService {
       });
     }
 
-    // leave
     if (!joinedToEvent) throw eventErrors.notJoined;
 
     await this.participantRepository.delete({
@@ -192,6 +235,7 @@ export class EventsService {
 
     const query = this.eventRepository
       .createQueryBuilder("event")
+      .leftJoinAndSelect("event.category", "category")
       .where("event.ownerId = :userId", { userId });
 
     if (search) {
@@ -208,7 +252,7 @@ export class EventsService {
       .getManyAndCount();
 
     return {
-      events,
+      events: events.map((e) => this.toResponse(e)),
       total,
       page,
       limit,
@@ -233,16 +277,16 @@ export class EventsService {
       id: p.user.id,
       name: p.user.name,
       email: p.user.email,
-      joinedAt: p.joinedAt,
+      joinedAt: p.joinedAt.toISOString(),
     }));
   }
 
   async findParticipations(userId: string) {
     const participations = await this.participantRepository.find({
       where: { userId },
-      relations: ["event"],
+      relations: ["event", "event.category"],
       order: { joinedAt: "DESC" },
     });
-    return participations.map((p) => p.event);
+    return participations.map((p) => this.toResponse(p.event));
   }
 }
