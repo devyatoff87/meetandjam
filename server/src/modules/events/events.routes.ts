@@ -207,7 +207,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // PARTICIPANTS LIST
-  app.get<{ Body: z.infer<typeof eventIdSchema> }>(
+  app.get<{ Params: z.infer<typeof eventIdSchema> }>(
     "/:id/participants",
     {
       schema: {
@@ -215,7 +215,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const { eventId } = request.body;
+      const { eventId } = request.params;
 
       try {
         const participants = await eventsService.findParticipants(eventId);
@@ -265,7 +265,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // GET ONE EVENT
-  app.get<{ Body: z.infer<typeof eventIdSchema> }>(
+  app.get<{ Params: z.infer<typeof uuidSchema> }>(
     "/:id",
     {
       schema: {
@@ -273,13 +273,10 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const { eventId } = request.body;
+      const { id } = request.params;
 
       try {
-        const event = await eventsService.findOne(
-          eventId,
-          request.user?.sub || "",
-        );
+        const event = await eventsService.findOne(id, request.user?.sub || "");
         return reply.code(200).send(event);
       } catch (error: any) {
         return sendBusinessError(
@@ -328,7 +325,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
 
   // DELETE ONE
   app.delete<{
-    Body: z.infer<typeof eventIdSchema>;
+    Params: z.infer<typeof eventIdSchema>;
   }>(
     "/:id",
     {
@@ -338,7 +335,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const { eventId } = request.body;
+      const { eventId } = request.params;
 
       try {
         await eventsService.delete(eventId, request.user.sub);
