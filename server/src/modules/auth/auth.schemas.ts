@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+// ===== BODY SCHEMAS =====
+
 export const nameSchema = z
   .string({ message: "Name is required" })
   .trim()
@@ -33,7 +35,6 @@ const emailSchema = z
   .pipe(z.email({ message: "Please provide a valid email address" }))
   .transform((val) => val.toLowerCase())
   .meta({ example: "users@email.me" });
-password: 3;
 
 export const registerSchema = z.object({
   email: emailSchema,
@@ -46,10 +47,15 @@ export const loginSchema = z.object({
   password: passwordSchema,
 });
 
+// ===== RESPONSE SCHEMAS =====
+
+const emailResponseSchema = z.string().meta({ example: "users@email.me" });
+const nameResponseSchema = z.string().meta({ example: "John Doe" });
+
 export const userResponseSchema = z.object({
   id: z.uuid(),
-  email: emailSchema,
-  name: nameSchema,
+  email: emailResponseSchema,
+  name: nameResponseSchema,
 });
 
 export const authResponseSchema = z.object({
@@ -59,11 +65,13 @@ export const authResponseSchema = z.object({
 
 export const meResponseSchema = z.object({
   id: z.uuid(),
-  email: emailSchema,
-  name: nameSchema,
+  email: emailResponseSchema,
+  name: nameResponseSchema,
   createdAt: z.string().meta({ example: "2026-09-12T14:35:22.123Z" }),
   updatedAt: z.string().meta({ example: "2026-09-12T14:35:22.123Z" }),
 });
+
+// ===== TYPES =====
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

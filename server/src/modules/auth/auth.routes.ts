@@ -5,7 +5,6 @@ import {
   meResponseSchema,
   registerSchema,
 } from "./auth.schemas";
-import {} from "../helpers/check.credentials";
 import AuthService from "./auth.service";
 import { sendBusinessError, sendValidationError } from "../helpers/errors";
 
@@ -120,8 +119,8 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
           id: user.id,
           email: user.email,
           name: user.name,
-          updatedAt: user.updatedAt,
-          createdAt: user.createdAt,
+          updatedAt: user.updatedAt.toISOString(),
+          createdAt: user.createdAt.toISOString(),
         });
       } catch (error: any) {
         return sendBusinessError(
