@@ -26,9 +26,6 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         body: createEventSchema,
-        response: {
-          201: eventResponseSchema,
-        },
       },
     },
     async (request, reply) => {
@@ -55,9 +52,6 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     {
       schema: {
         querystring: allEventsSchema,
-        response: {
-          200: eventsListResponseSchema,
-        },
       },
     },
     async (request, reply) => {
@@ -85,9 +79,6 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         querystring: allEventsSchema,
-        response: {
-          200: eventsListResponseSchema,
-        },
       },
     },
     async (request, reply) => {
@@ -111,154 +102,18 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     },
   );
 
-  // GET ONE EVENT
+  // JOINED EVENTS
   app.get(
-    "/:id",
-    {
-      schema: {
-        params: uuidSchema,
-        response: {
-          200: eventResponseSchema,
-        },
-      },
-    },
-    async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
-
-      try {
-        const event = await eventsService.findOne(id, request.user?.sub || "");
-        return reply.code(200).send(event);
-      } catch (error: any) {
-        return sendBusinessError(
-          reply,
-          error.status || 500,
-          error.message,
-          error.code,
-        );
-      }
-    },
-  );
-
-  //GET USERS EVENTS
-  app.get(
-    "/user/:userId",
-    {
-      schema: {
-        params: uuidSchema,
-        querystring: allEventsSchema,
-        response: {
-          200: eventsListResponseSchema,
-        },
-      },
-    },
-    async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
-
-      const parseQueries = validateEventsQueries(request.query, reply);
-      if (!parseQueries) return;
-
-      try {
-        const events = await eventsService.getAllByUser(id, parseQueries);
-        return reply.code(200).send(events);
-      } catch (error: any) {
-        return sendBusinessError(
-          reply,
-          error.status || 500,
-          error.message,
-          error.code,
-        );
-      }
-    },
-  );
-  // UPDATE
-  app.patch(
-    "/:id",
+    "/joined",
     {
       preHandler: [app.authenticate],
-      schema: {
-        params: uuidSchema,
-        body: updateEventSchema,
-        response: {
-          200: eventResponseSchema,
-        },
-      },
     },
     async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
-
-      const parseBody = validateZ(updateEventSchema, request.body, reply);
-      if (!parseBody) return;
+      const userId = request.user.sub;
 
       try {
-        const updated = await eventsService.update(
-          id,
-          request.user.sub,
-          parseBody,
-        );
-        return reply.send(updated);
-      } catch (error: any) {
-        return sendBusinessError(
-          reply,
-          error.status || 500,
-          error.message,
-          error.code,
-        );
-      }
-    },
-  );
-
-  // DELETE ALL
-  app.delete(
-    "/all",
-    {
-      preHandler: [app.authenticate],
-      schema: {
-        response: {
-          200: messageResponseSchema,
-        },
-      },
-    },
-    async (request, reply) => {
-      try {
-        await eventsService.deleteAll(request.user.sub);
-        return reply.code(200).send({ message: "All events deleted" });
-      } catch (error: any) {
-        return sendBusinessError(
-          reply,
-          error.status || 500,
-          error.message,
-          error.code,
-        );
-      }
-    },
-  );
-
-  // DELETE ONE
-  app.delete(
-    "/:id",
-    {
-      preHandler: [app.authenticate],
-      schema: {
-        params: uuidSchema,
-        response: {
-          200: messageResponseSchema,
-        },
-      },
-    },
-    async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
-
-      try {
-        await eventsService.delete(id, request.user.sub);
-        return reply.code(200).send({ message: "Event deleted" });
+        const joined = await eventsService.findParticipations(userId);
+        reply.code(200).send(joined);
       } catch (error: any) {
         return sendBusinessError(
           reply,
@@ -277,9 +132,6 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         body: eventIdSchema,
-        response: {
-          201: participantResponseSchema,
-        },
       },
     },
     async (request, reply) => {
@@ -312,9 +164,6 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         body: eventIdSchema,
-        response: {
-          200: messageResponseSchema,
-        },
       },
     },
     async (request, reply) => {
@@ -340,15 +189,33 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     },
   );
 
+  // DELETE ALL
+  app.delete(
+    "/all",
+    {
+      preHandler: [app.authenticate],
+    },
+    async (request, reply) => {
+      try {
+        await eventsService.deleteAll(request.user.sub);
+        return reply.code(200).send({ message: "All events deleted" });
+      } catch (error: any) {
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
+      }
+    },
+  );
+
   // PARTICIPANTS LIST
   app.get(
     "/:id/participants",
     {
       schema: {
         params: uuidSchema,
-        response: {
-          200: participantsListResponseSchema,
-        },
       },
     },
     async (request, reply) => {
@@ -370,23 +237,120 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
     },
   );
 
-  // JOINED EVENTS
+  // GET USERS EVENTS
   app.get(
-    "/joined",
+    "/user/:id",
     {
-      preHandler: [app.authenticate],
       schema: {
+        params: uuidSchema,
+        querystring: allEventsSchema,
         response: {
-          200: joinedEventsResponseSchema,
+          200: eventsListResponseSchema,
         },
       },
     },
     async (request, reply) => {
-      const userId = request.user.sub;
+      const parseId = validateZ(uuidSchema, request.params, reply);
+      if (!parseId) return;
+      const { id } = parseId;
+
+      const parseQueries = validateEventsQueries(request.query, reply);
+      if (!parseQueries) return;
 
       try {
-        const joined = await eventsService.findParticipations(userId);
-        reply.code(200).send(joined);
+        const events = await eventsService.getAllByUser(id, parseQueries);
+        return reply.code(200).send(events);
+      } catch (error: any) {
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
+      }
+    },
+  );
+
+  // GET ONE EVENT
+  app.get(
+    "/:id",
+    {
+      schema: {
+        params: uuidSchema,
+      },
+    },
+    async (request, reply) => {
+      const parseId = validateZ(uuidSchema, request.params, reply);
+      if (!parseId) return;
+      const { id } = parseId;
+
+      try {
+        const event = await eventsService.findOne(id, request.user?.sub || "");
+        return reply.code(200).send(event);
+      } catch (error: any) {
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
+      }
+    },
+  );
+
+  // UPDATE
+  app.patch(
+    "/:id",
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        params: uuidSchema,
+        body: updateEventSchema,
+      },
+    },
+    async (request, reply) => {
+      const parseId = validateZ(uuidSchema, request.params, reply);
+      if (!parseId) return;
+      const { id } = parseId;
+
+      const parseBody = validateZ(updateEventSchema, request.body, reply);
+      if (!parseBody) return;
+
+      try {
+        const updated = await eventsService.update(
+          id,
+          request.user.sub,
+          parseBody,
+        );
+        return reply.send(updated);
+      } catch (error: any) {
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
+      }
+    },
+  );
+
+  // DELETE ONE
+  app.delete(
+    "/:id",
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        params: uuidSchema,
+      },
+    },
+    async (request, reply) => {
+      const parseId = validateZ(uuidSchema, request.params, reply);
+      if (!parseId) return;
+      const { id } = parseId;
+
+      try {
+        await eventsService.delete(id, request.user.sub);
+        return reply.code(200).send({ message: "Event deleted" });
       } catch (error: any) {
         return sendBusinessError(
           reply,

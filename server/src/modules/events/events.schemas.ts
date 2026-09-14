@@ -1,8 +1,7 @@
 import z from "zod";
 import { CATEGORY_SLUGS } from "../../types/categories";
-import { nameSchema } from "../auth/auth.schemas";
 
-// ===== FIELD SCHEMAS =====
+// ===== FIELD SCHEMAS (BODY) =====
 
 const titleSchema = z
   .string({ message: "Title is required" })
@@ -64,7 +63,7 @@ const donationInfoSchema = z
   .optional()
   .meta({ example: "Minimum donation: 5 EUR" });
 
-const categorySchema = z.enum(CATEGORY_SLUGS).meta({ example: "jazz" });
+const categorySchema = z.enum(CATEGORY_SLUGS).meta({ example: "jam" });
 
 // ===== BODY SCHEMAS =====
 
@@ -97,7 +96,6 @@ export const updateEventSchema = z.object({
 // ===== PARAMS SCHEMAS =====
 
 const uuidField = z
-  .string()
   .uuid({ message: "Invalid UUID format" })
   .meta({ example: "3fa85f64-5717-4562-b3fc-2c963f66afa6" });
 
@@ -124,38 +122,38 @@ export const allEventsSchema = z.object({
   category: categorySchema.optional(),
 });
 
-// ===== RESPONSE SCHEMAS =====
+// ===== RESPONSE SCHEMAS (упрощённые) =====
 
 export const eventResponseSchema = z.object({
-  id: uuidField,
-  title: titleSchema,
-  description: descriptionSchema,
-  maxParticipants: maxParticipantsSchema.nullable(),
-  contactInfo: contactInfoSchema.nullable(),
-  entryPrice: entryPriceSchema.nullable(),
-  isDonationBased: isDonationBasedSchema,
-  donationInfo: donationInfoSchema.nullable(),
-  address: addressSchema,
-  startsAt: z.string().meta({ example: "2026-09-15T19:00:00.000Z" }),
-  category: categorySchema,
-  ownerId: uuidField,
-  createdAt: z.string().meta({ example: "2026-09-12T14:35:22.123Z" }),
-  updatedAt: z.string().meta({ example: "2026-09-12T14:35:22.123Z" }),
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  maxParticipants: z.number().nullable(),
+  contactInfo: z.string().nullable(),
+  entryPrice: z.number().nullable(),
+  isDonationBased: z.boolean(),
+  donationInfo: z.string().nullable(),
+  address: z.string(),
+  startsAt: z.string(),
+  category: z.enum(CATEGORY_SLUGS).nullable(),
+  ownerId: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export const eventsListResponseSchema = z.object({
   events: z.array(eventResponseSchema),
-  total: z.number().meta({ example: 30 }),
-  page: z.number().meta({ example: 1 }),
-  limit: z.number().meta({ example: 10 }),
-  totalPages: z.number().meta({ example: 3 }),
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
+  totalPages: z.number(),
 });
 
 export const participantResponseSchema = z.object({
-  id: uuidField,
-  name: nameSchema.meta({ example: "Jazz Fan" }),
-  email: z.string().meta({ example: "jazzfan@berlin.de" }),
-  joinedAt: z.string().meta({ example: "2026-09-12T14:35:22.123Z" }),
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  joinedAt: z.string(),
 });
 
 export const participantsListResponseSchema = z.array(
@@ -163,7 +161,7 @@ export const participantsListResponseSchema = z.array(
 );
 
 export const messageResponseSchema = z.object({
-  message: z.string().meta({ example: "Event deleted" }),
+  message: z.string(),
 });
 
 export const joinedEventsResponseSchema = z.array(eventResponseSchema);
