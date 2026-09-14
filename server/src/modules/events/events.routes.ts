@@ -13,8 +13,9 @@ import {
   joinedEventsResponseSchema,
 } from "./events.schemas";
 import { EventsService } from "./events.services";
-import { validateEventsQueries, validateZ } from "../helpers/validations";
+import { validateEventsQueries } from "../helpers/validations";
 import { sendBusinessError } from "../helpers/errors";
+import z from "zod";
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();
@@ -29,11 +30,10 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseBody = validateZ(createEventSchema, request.body, reply);
-      if (!parseBody) return;
+      const eventData = request.body;
 
       try {
-        const event = await eventsService.create(parseBody, request.user.sub);
+        const event = await eventsService.create(eventData, request.user.sub);
         return reply.code(201).send(event);
       } catch (error: any) {
         return sendBusinessError(
@@ -126,7 +126,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // JOIN
-  app.post(
+  app.post<{ Body: z.infer<typeof eventIdSchema> }>(
     "/join",
     {
       preHandler: [app.authenticate],
@@ -135,9 +135,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseBody = validateZ(eventIdSchema, request.body, reply);
-      if (!parseBody) return;
-      const { eventId } = parseBody;
+      const { eventId } = request.body;
 
       try {
         const participant = await eventsService.joinEvent(
@@ -167,9 +165,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseBody = validateZ(eventIdSchema, request.body, reply);
-      if (!parseBody) return;
-      const { eventId } = parseBody;
+      const { eventId } = request.body as { eventId: string };
 
       try {
         const result = await eventsService.joinEvent(
@@ -211,7 +207,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // PARTICIPANTS LIST
-  app.get(
+  app.get<{ Body: z.infer<typeof eventIdSchema> }>(
     "/:id/participants",
     {
       schema: {
@@ -219,12 +215,10 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
+      const { eventId } = request.body;
 
       try {
-        const participants = await eventsService.findParticipants(id);
+        const participants = await eventsService.findParticipants(eventId);
         reply.code(200).send(participants);
       } catch (error: any) {
         return sendBusinessError(
@@ -238,7 +232,10 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // GET USERS EVENTS
-  app.get(
+  app.get<{
+    Params: z.infer<typeof uuidSchema>;
+    Querystring: z.infer<typeof allEventsSchema>;
+  }>(
     "/user/:id",
     {
       schema: {
@@ -250,15 +247,11 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
-
-      const parseQueries = validateEventsQueries(request.query, reply);
-      if (!parseQueries) return;
+      const { id } = request.params;
+      const query = request.query;
 
       try {
-        const events = await eventsService.getAllByUser(id, parseQueries);
+        const events = await eventsService.getAllByUser(id, query);
         return reply.code(200).send(events);
       } catch (error: any) {
         return sendBusinessError(
@@ -272,7 +265,7 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // GET ONE EVENT
-  app.get(
+  app.get<{ Body: z.infer<typeof eventIdSchema> }>(
     "/:id",
     {
       schema: {
@@ -280,12 +273,13 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
+      const { eventId } = request.body;
 
       try {
-        const event = await eventsService.findOne(id, request.user?.sub || "");
+        const event = await eventsService.findOne(
+          eventId,
+          request.user?.sub || "",
+        );
         return reply.code(200).send(event);
       } catch (error: any) {
         return sendBusinessError(
@@ -299,29 +293,27 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // UPDATE
-  app.patch(
+  app.patch<{
+    Params: z.infer<typeof uuidSchema>;
+    Body: z.infer<typeof updateEventSchema>;
+  }>(
     "/:id",
     {
       preHandler: [app.authenticate],
       schema: {
         params: uuidSchema,
         body: updateEventSchema,
+        response: {
+          200: eventResponseSchema,
+        },
       },
     },
     async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
-
-      const parseBody = validateZ(updateEventSchema, request.body, reply);
-      if (!parseBody) return;
+      const { id } = request.params;
+      const data = request.body;
 
       try {
-        const updated = await eventsService.update(
-          id,
-          request.user.sub,
-          parseBody,
-        );
+        const updated = await eventsService.update(id, request.user.sub, data);
         return reply.send(updated);
       } catch (error: any) {
         return sendBusinessError(
@@ -335,7 +327,9 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // DELETE ONE
-  app.delete(
+  app.delete<{
+    Body: z.infer<typeof eventIdSchema>;
+  }>(
     "/:id",
     {
       preHandler: [app.authenticate],
@@ -344,12 +338,10 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const parseId = validateZ(uuidSchema, request.params, reply);
-      if (!parseId) return;
-      const { id } = parseId;
+      const { eventId } = request.body;
 
       try {
-        await eventsService.delete(id, request.user.sub);
+        await eventsService.delete(eventId, request.user.sub);
         return reply.code(200).send({ message: "Event deleted" });
       } catch (error: any) {
         return sendBusinessError(
