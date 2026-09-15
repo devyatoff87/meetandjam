@@ -99,12 +99,12 @@ const uuidField = z
   .uuid({ message: "Invalid UUID format" })
   .meta({ example: "3fa85f64-5717-4562-b3fc-2c963f66afa6" });
 
-export const uuidSchema = z.object({
-  id: uuidField,
-});
-
 export const eventIdSchema = z.object({
   eventId: uuidField,
+});
+
+export const userIdSchema = z.object({
+  userId: uuidField,
 });
 
 // ===== QUERY SCHEMAS =====

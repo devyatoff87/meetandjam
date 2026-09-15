@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from "fastify";
 import {
   allEventsSchema,
   eventsListResponseSchema,
-  uuidSchema,
+  userIdSchema,
 } from "../events.schemas";
 import { EventsService } from "../events.services";
 import { sendBusinessError } from "../../helpers/errors";
@@ -11,13 +11,13 @@ import z from "zod";
 export const usersEventsRoute: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();
   app.get<{
-    Params: z.infer<typeof uuidSchema>;
+    Params: z.infer<typeof userIdSchema>;
     Querystring: z.infer<typeof allEventsSchema>;
   }>(
-    "/user/:id",
+    "/user/:userId",
     {
       schema: {
-        params: uuidSchema,
+        params: userIdSchema,
         querystring: allEventsSchema,
         response: {
           200: eventsListResponseSchema,
@@ -25,11 +25,11 @@ export const usersEventsRoute: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const { id } = request.params;
+      const { userId } = request.params;
       const query = request.query;
 
       try {
-        const events = await eventsService.getAllByUser(id, query);
+        const events = await eventsService.getAllByUser(userId, query);
         return reply.code(200).send(events);
       } catch (error: any) {
         return sendBusinessError(

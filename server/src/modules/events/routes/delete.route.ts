@@ -18,10 +18,7 @@ export const deleteEventRoute: FastifyPluginAsync = async (app) => {
     },
     async (request, reply) => {
       const { eventId } = request.params;
-      console.log("🔍 DELETE /:id");
-      console.log("📦 request.params.eventId:", request.params.eventId);
-      console.log("👤 request.user:", request.user);
-      console.log("🆔 request.user.sub:", request.user?.sub);
+
       try {
         await eventsService.delete(eventId, request.user.sub);
         return reply.code(200).send({ message: "Event deleted" });

@@ -16,11 +16,12 @@ export const joinEventRoute: FastifyPluginAsync = async (app) => {
     },
     async (request, reply) => {
       const { eventId } = request.body;
+      const userId = request.user.sub;
 
       try {
         const participant = await eventsService.joinEvent(
           eventId,
-          request.user.sub,
+          userId,
           "join",
         );
         return reply.code(201).send(participant);
