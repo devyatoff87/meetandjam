@@ -165,3 +165,10 @@ export const messageResponseSchema = z.object({
 });
 
 export const joinedEventsResponseSchema = z.array(eventResponseSchema);
+
+export const joinResponseSchema = z.object({
+  id: z.string(),
+  eventId: z.string(),
+  userId: z.string(),
+  joinedAt: z.string(),
+});
