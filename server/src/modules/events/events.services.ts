@@ -200,7 +200,7 @@ export class EventsService {
     eventId: string,
     userId: string,
     operation: "join" | "leave",
-  ): Promise<EventParticipant | { message: string }> {
+  ) {
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
@@ -212,20 +212,24 @@ export class EventsService {
     });
 
     if (operation === "join") {
-      if (!!joinedToEvent) throw eventErrors.alreadyJoined;
+      if (joinedToEvent) throw eventErrors.alreadyJoined;
 
-      return await this.participantRepository.save({
+      const saved = await this.participantRepository.save({
         eventId,
         userId,
       });
+
+      return {
+        id: saved.id,
+        eventId: saved.eventId,
+        userId: saved.userId,
+        joinedAt: saved.joinedAt.toISOString(),
+      };
     }
 
     if (!joinedToEvent) throw eventErrors.notJoined;
 
-    await this.participantRepository.delete({
-      eventId,
-      userId,
-    });
+    await this.participantRepository.delete({ eventId, userId });
 
     return { message: "Successfully left the event" };
   }
@@ -284,7 +288,7 @@ export class EventsService {
       joinedAt: p.joinedAt.toISOString(),
     }));
   }
-   
+
   async findParticipations(userId: string) {
     const participations = await this.participantRepository.find({
       where: { userId },
