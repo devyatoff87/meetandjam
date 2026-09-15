@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
-import { eventIdSchema, userIdSchema } from "../events.schemas";
+import { eventIdSchema } from "../events.schemas";
 import { EventsService } from "../events.services";
 import { sendBusinessError } from "../../helpers/errors";
 import z from "zod";
@@ -10,7 +10,7 @@ export const participantsRoute: FastifyPluginAsync = async (app) => {
     "/:eventId/participants",
     {
       schema: {
-        params: userIdSchema,
+        params: eventIdSchema,
       },
     },
     async (request, reply) => {
