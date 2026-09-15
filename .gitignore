@@ -1,20 +1,8 @@
+# OS
 .DS_Store
 Thumbs.db
-*.tmp
-*.swp
-*.swo
 
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-.env
-.env.local
-.env.*.local
-*.env
-
+# Editors
 .vscode/
 .idea/
 *.iml
@@ -22,41 +10,95 @@ pnpm-debug.log*
 .classpath
 .settings/
 *.sublime-*
+*.tmp
+*.swp
+*.swo
 
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# Env
+.env*
+!.env.example
+
+# Secrets
+*.pem
+
+# Frontend — Node
+frontend/node_modules/
+frontend/.npm/
+frontend/.yarn/
+frontend/.pnp
+frontend/.pnp.*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/versions
+
+# Frontend — Build
+frontend/dist/
+frontend/build/
+frontend/.next/
+frontend/out/
+
+# Frontend — Cache
+frontend/.output/
+frontend/.vercel/
+frontend/.netlify/
+frontend/.vite/
+frontend/.cache/
+frontend/.parcel-cache/
+
+# Frontend — Types
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# Frontend — Tests
+frontend/coverage/
+frontend/.nyc_output/
+
+# Frontend — Temp
+frontend/tmp/
+frontend/temp/
+
+# Backend — Node
 server/node_modules/
 server/.npm/
 server/.yarn/
+server/.pnp
+server/.pnp.*
+!server/.yarn/patches
+!server/.yarn/plugins
+!server/.yarn/releases
+!server/.yarn/versions
+
+# Backend — Build
 server/dist/
 server/build/
 server/.tsbuildinfo
+
+# Backend — Tests
 server/coverage/
 server/.nyc_output/
-server/junit.xml
+
+# Backend — Temp
 server/tmp/
 server/temp/
 
-client/node_modules/
-client/.npm/
-client/.yarn/
-client/dist/
-client/build/
-client/.output/
-client/.vercel/
-client/.netlify/
-client/.vite/
-client/.cache/
-client/.parcel-cache/
-client/.next/
-client/out/
-client/coverage/
-client/.nyc_output/
-client/tmp/
-client/temp/
+# Backend — Misc
+server/junit.xml
 
+# Docker
 docker-compose.override.yml
 *.dockerignore
 .Dockerfile
 
+# DB
 *.db
 *.sqlite
 *.sqlite3
