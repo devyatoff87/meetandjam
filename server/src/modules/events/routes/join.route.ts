@@ -1,0 +1,37 @@
+import { FastifyPluginAsync } from "fastify";
+import { eventIdSchema } from "../events.schemas";
+import { EventsService } from "../events.services";
+import { sendBusinessError } from "../../helpers/errors";
+import z from "zod";
+
+export const joinEventRoute: FastifyPluginAsync = async (app) => {
+  const eventsService = new EventsService();
+  app.post<{ Body: z.infer<typeof eventIdSchema> }>(
+    "/join",
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        body: eventIdSchema,
+      },
+    },
+    async (request, reply) => {
+      const { eventId } = request.body;
+
+      try {
+        const participant = await eventsService.joinEvent(
+          eventId,
+          request.user.sub,
+          "join",
+        );
+        return reply.code(201).send(participant);
+      } catch (error: any) {
+        return sendBusinessError(
+          reply,
+          error.status || 500,
+          error.message,
+          error.code,
+        );
+      }
+    },
+  );
+};
