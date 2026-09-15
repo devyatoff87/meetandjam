@@ -130,11 +130,6 @@ export class EventsService {
   }
 
   async findOne(id: string, userId: string) {
-    const { event, isOwner, isAdmin } = await checkEventOwnership(id, userId);
-
-    if (!event) throw eventErrors.eventNotFound;
-    if (!isOwner && !isAdmin) throw eventErrors.accessDenied;
-
     const full = await this.eventRepository.findOne({
       where: { id },
       relations: ["category"],
@@ -289,7 +284,7 @@ export class EventsService {
       joinedAt: p.joinedAt.toISOString(),
     }));
   }
-
+   
   async findParticipations(userId: string) {
     const participations = await this.participantRepository.find({
       where: { userId },
