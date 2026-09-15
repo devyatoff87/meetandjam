@@ -7,10 +7,6 @@ import {
   allEventsSchema,
   eventsListResponseSchema,
   eventResponseSchema,
-  messageResponseSchema,
-  participantResponseSchema,
-  participantsListResponseSchema,
-  joinedEventsResponseSchema,
 } from "./events.schemas";
 import { EventsService } from "./events.services";
 import { validateEventsQueries } from "../helpers/validations";
