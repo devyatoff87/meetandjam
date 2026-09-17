@@ -1,7 +1,7 @@
-import { AppDataSource } from "../../db/data-source";
-import { User } from "../../db/entities/user.entity";
-import { Event } from "../../db/entities/event.entity";
-import { ROLES } from "../../types/roles";
+import { AppDataSource } from "../db/data-source";
+import { User } from "../db/entities/user.entity";
+import { Event } from "../db/entities/event.entity";
+import { ROLES } from "../types/roles";
 
 export const checkAdminship = async (userId: string): Promise<boolean> => {
   const userRepository = AppDataSource.getRepository(User);

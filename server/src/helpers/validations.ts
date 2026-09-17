@@ -1,7 +1,7 @@
 import { FastifyReply } from "fastify";
 import { ZodType } from "zod";
 import { sendValidationError } from "./errors";
-import { allEventsSchema } from "../events/events.schemas";
+import { allEventsSchema } from "../modules/events/events.schemas";
 
 export const validateZ = <T>(
   schema: ZodType<T>,
