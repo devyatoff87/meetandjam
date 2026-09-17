@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { EventsService } from "../events.services";
-import { sendBusinessError } from "../../helpers/errors";
+import { sendBusinessError } from "../../../helpers/errors";
 
 export const deleteAllEventsRoute: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();

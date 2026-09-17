@@ -6,7 +6,7 @@ import {
   registerSchema,
 } from "./auth.schemas";
 import AuthService from "./auth.service";
-import { sendBusinessError, sendValidationError } from "../helpers/errors";
+import { sendBusinessError, sendValidationError } from "../../helpers/errors";
 
 export const authRoutes: FastifyPluginAsync = async (app) => {
   const authService = new AuthService();

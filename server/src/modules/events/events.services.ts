@@ -7,7 +7,7 @@ import { EventResponse } from "../../types/event";
 import {
   checkAdminship,
   checkEventOwnership,
-} from "../helpers/check.credentials";
+} from "../../helpers/check.credentials";
 
 const eventErrors = {
   eventNotFound: {

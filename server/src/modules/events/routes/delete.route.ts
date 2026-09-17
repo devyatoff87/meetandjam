@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 import { eventIdSchema, messageResponseSchema } from "../events.schemas";
 import { EventsService } from "../events.services";
-import { sendBusinessError } from "../../helpers/errors";
+import { sendBusinessError } from "../../../helpers/errors";
 import z from "zod";
 
 export const deleteEventRoute: FastifyPluginAsync = async (app) => {

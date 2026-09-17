@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 import { EventsService } from "../events.services";
-import { sendBusinessError } from "../../helpers/errors";
-import { joinedEventsResponseSchema } from '../events.schemas';
+import { sendBusinessError } from "../../../helpers/errors";
+import { joinedEventsResponseSchema } from "../events.schemas";
 
 export const joinedEventsRoute: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();
@@ -11,9 +11,9 @@ export const joinedEventsRoute: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate],
       schema: {
         response: {
-          200: joinedEventsResponseSchema
-        }
-      }
+          200: joinedEventsResponseSchema,
+        },
+      },
     },
     async (request, reply) => {
       const userId = request.user.sub;
