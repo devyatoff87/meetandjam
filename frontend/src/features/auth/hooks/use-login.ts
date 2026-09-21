@@ -11,6 +11,7 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: login,
+    retry: false,
     onSuccess: (data) => {
       setToken(data.token);
       queryClient.setQueryData(["me"], data.user);
