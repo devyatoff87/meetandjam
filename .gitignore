@@ -104,5 +104,6 @@ docker-compose.override.yml
 *.sqlite3
 *.sqlite-journal
 
-cmd.git-commands.ps1
-cmd.api-commands.ps1
+commands
+
+frontend/.vitest/
