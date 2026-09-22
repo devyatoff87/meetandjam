@@ -1,18 +1,7 @@
-import type { Metadata } from "next";
-import { QueryProvider } from "./query.provider";
-import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "MeetAndJam",
-  description: "Find and join music jam sessions",
-};
-
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function Loading() {
   return (
-    <html lang="en">
-      <body>
-        <QueryProvider>{children}</QueryProvider>
-      </body>
-    </html>
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="text-muted-foreground">Loading...</p>
+    </div>
   );
 }
