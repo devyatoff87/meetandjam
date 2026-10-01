@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { loginSchema, registerSchema } from "./auth.schema";
+import { loginSchema, registerSchema } from "../auth.schema";
 import { loginMock, registerMock } from "./auth.mocks";
 
 describe("loginSchema", () => {
