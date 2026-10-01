@@ -30,7 +30,7 @@ export function RegisterForm() {
     error instanceof ApiError ? error.message : error ? "Something went wrong" : null;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Field>
         <FieldLabel htmlFor="name">Name</FieldLabel>
         <Input id="name" placeholder="John Doe" {...register("name")} />
