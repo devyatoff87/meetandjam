@@ -30,7 +30,7 @@ export function LoginForm() {
     error instanceof ApiError ? error.message : error ? "Something went wrong" : null;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Field>
         <FieldLabel htmlFor="email">Email</FieldLabel>
         <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
