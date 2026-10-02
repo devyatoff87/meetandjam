@@ -3,7 +3,7 @@ import { z } from "zod";
 export const eventSchema = z.object({
   title: z.string().min(8).max(128),
   description: z.string().min(8).max(1024),
-  address: z.string().min(8).max(255),
+  address: z.string().min(8).max(128),
   startsAt: z.string().min(1),
   category: z.enum(["jam", "word", "theater", "standup", "dance", "another"]),
   maxParticipants: z.number().int().positive().max(255).optional(),
