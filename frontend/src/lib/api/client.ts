@@ -12,7 +12,7 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
   const res = await fetch(`${env.NEXT_PUBLIC_API_URL}${path}`, {
     ...rest,
     headers: {
-      "Content-Type": "application/json",
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
