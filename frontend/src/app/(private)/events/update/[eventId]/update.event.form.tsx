@@ -7,7 +7,7 @@ import { EventFormValues, eventSchema } from "@/features/events/event.schema";
 import { EventForm } from "../../event.form.ui";
 import { Event } from "@/lib/api/types";
 import { toDatetimeLocal } from "@/lib/utils";
-import { useUpdateEvent } from "@/features/events/hooks/use-update-event";
+import { useUpdateEvent } from "@/features/events/hooks/use.update.event";
 
 export function UpdateEventForm({ event }: { event: Event }) {
   const {

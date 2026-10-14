@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApiError } from "@/lib/api/errors";
 import { EventFormValues, eventSchema } from "@/features/events/event.schema";
-import { useCreateEvent } from "@/features/events/hooks/use-create-event";
+import { useCreateEvent } from "@/features/events/hooks/use.create.event";
 import { EventForm } from "../event.form.ui";
 
 export function CreateEventForm() {
