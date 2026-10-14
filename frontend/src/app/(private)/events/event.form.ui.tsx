@@ -6,6 +6,7 @@ import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { EventFormValues } from "@/features/events/event.schema";
 import { Textarea } from "@/components/ui/textarea";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 type EventFormProps = {
   form: {
@@ -30,7 +31,7 @@ const categories = [
 
 export function EventForm({ form, submitLabel, pendingLabel }: EventFormProps) {
   const { register, errors, submitHandle, isPending, errorMessage } = form;
-
+  const router = useRouter();
   return (
     <form onSubmit={submitHandle} noValidate className="space-y-4">
       <Field>
@@ -77,6 +78,9 @@ export function EventForm({ form, submitLabel, pendingLabel }: EventFormProps) {
 
       <Button type="submit" disabled={isPending} className="w-full">
         {isPending ? pendingLabel : submitLabel}
+      </Button>
+      <Button onClick={() => router.back()} className="w-full">
+        Cancel
       </Button>
     </form>
   );
