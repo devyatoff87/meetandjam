@@ -41,8 +41,8 @@ export function EventForm({ form, submitLabel, pendingLabel }: EventFormProps) {
 
       <Field>
         <FieldLabel htmlFor="description">Description</FieldLabel>
-        <FieldError errors={[errors.description]} />
         <Textarea className="max-h-96" id="description" {...register("description")} />
+        <FieldError errors={[errors.description]} />
       </Field>
 
       <Field>
