@@ -8,9 +8,11 @@ import { EventForm } from "@/features/components/event.form";
 import { Event } from "@/lib/api/types";
 import { toDatetimeLocal } from "@/lib/utils";
 import { useUpdateEvent } from "@/features/events/hooks/use.update.event";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export function UpdateEventForm({ event }: { event: Event }) {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -25,8 +27,6 @@ export function UpdateEventForm({ event }: { event: Event }) {
       category: event.category ?? undefined,
     },
   });
-
-  const router = useRouter();
 
   function onCancel() {
     router.back();
