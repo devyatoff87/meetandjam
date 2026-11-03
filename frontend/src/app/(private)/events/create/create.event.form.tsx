@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ApiError } from "@/lib/api/errors";
 import { EventFormValues, eventSchema } from "@/features/events/event.schema";
 import { useCreateEvent } from "@/features/events/hooks/use.create.event";
-import { EventForm } from "../event.form.ui";
+import { EventForm } from "@/features/components/event.form";
 
 export function CreateEventForm() {
   const {
