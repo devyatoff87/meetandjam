@@ -6,6 +6,7 @@ import { ApiError } from "@/lib/api/errors";
 import { EventFormValues, eventSchema } from "@/features/events/event.schema";
 import { useCreateEvent } from "@/features/events/hooks/use.create.event";
 import { EventForm } from "@/features/components/event.form";
+import { useRouter } from "next/router";
 
 export function CreateEventForm() {
   const {
@@ -33,6 +34,12 @@ export function CreateEventForm() {
   const errorMessage =
     error instanceof ApiError ? error.message : error ? "Something went wrong" : null;
 
+  const router = useRouter();
+
+  function onCancel() {
+    router.back();
+  }
+
   const form = {
     register,
     errors,
@@ -41,5 +48,12 @@ export function CreateEventForm() {
     errorMessage,
   };
 
-  return <EventForm form={form} submitLabel="Create event" pendingLabel="Creating..." />;
+  return (
+    <EventForm
+      cancelFn={onCancel}
+      form={form}
+      submitLabel="Create event"
+      pendingLabel="Creating..."
+    />
+  );
 }

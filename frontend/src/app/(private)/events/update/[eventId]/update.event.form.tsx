@@ -8,6 +8,7 @@ import { EventForm } from "@/features/components/event.form";
 import { Event } from "@/lib/api/types";
 import { toDatetimeLocal } from "@/lib/utils";
 import { useUpdateEvent } from "@/features/events/hooks/use.update.event";
+import { useRouter } from "next/router";
 
 export function UpdateEventForm({ event }: { event: Event }) {
   const {
@@ -24,6 +25,12 @@ export function UpdateEventForm({ event }: { event: Event }) {
       category: event.category ?? undefined,
     },
   });
+
+  const router = useRouter();
+
+  function onCancel() {
+    router.back();
+  }
 
   const mutation = useUpdateEvent(event.id);
 
@@ -43,5 +50,12 @@ export function UpdateEventForm({ event }: { event: Event }) {
     errorMessage,
   };
 
-  return <EventForm form={form} submitLabel="Update event" pendingLabel="Updating..." />;
+  return (
+    <EventForm
+      form={form}
+      cancelFn={onCancel}
+      submitLabel="Update event"
+      pendingLabel="Updating..."
+    />
+  );
 }
