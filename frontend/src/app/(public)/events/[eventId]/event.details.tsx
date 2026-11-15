@@ -11,14 +11,14 @@ export function EventDetails({ event }: { event: Event }) {
   const { data: me } = useMe();
   const isYourEvent = me?.id === event.ownerId;
   const mutation = useDeleteEvent();
-
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
-        <h1 className="text-3xl font-bold">
-          {event.title} {isYourEvent && <span className="text-sm">/ your event</span>}
-        </h1>
-        {event.category && <Badge>{event.category}</Badge>}
+        <h1 className="text-3xl font-bold">{event.title}</h1>
+        <div className="flex gap-2">
+          {isYourEvent && <Badge variant="secondary">Your event</Badge>}
+          {event.category && <Badge>{event.category}</Badge>}
+        </div>
       </div>
 
       <div className="grid gap-4 text-sm sm:grid-cols-2">
@@ -61,11 +61,12 @@ export function EventDetails({ event }: { event: Event }) {
             <Link href={`/events/update/${event.id}`}>Update</Link>
           </Button>
           <Button
+            disabled={mutation.isPending}
             onClick={() => {
               mutation.mutate(event.id);
             }}
           >
-            Delete
+            {mutation.isPending ? "Deleting..." : "Delete"}
           </Button>
         </div>
       )}
