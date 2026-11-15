@@ -146,18 +146,18 @@ export class EventsService {
     if (!event) throw eventErrors.eventNotFound;
     if (!isOwner) throw eventErrors.accessDenied;
 
-    const { categorySlug, ...rest } = data;
+    const { category, ...rest } = data;
 
-    if (categorySlug) {
-      const category = await this.categoryRepository.findOne({
-        where: { slug: categorySlug },
+    if (category) {
+      const found = await this.categoryRepository.findOne({
+        where: { slug: category },
       });
 
-      if (!category) {
+      if (!found) {
         throw eventErrors.categoryNotFound;
       }
 
-      event.categoryId = category.id;
+      event.categoryId = found.id;
     }
 
     const saved = await this.eventRepository.save({
