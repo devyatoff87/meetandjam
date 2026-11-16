@@ -663,14 +663,12 @@ export interface paths {
       requestBody?: never;
       responses: {
         /** @description Default Response */
-        200: {
+        204: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
-              message: string;
-            };
+            "application/json": null;
           };
         };
       };
