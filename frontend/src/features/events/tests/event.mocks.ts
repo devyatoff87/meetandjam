@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { eventSchema } from "../event.schema";
+import { Event } from "../types";
 
 type EventInput = z.input<typeof eventSchema>;
 
@@ -89,3 +90,20 @@ export const mockEventsDumb = {
     category: "jam",
   },
 } satisfies Record<string, EventInput>;
+
+export const mockEventDetails: Event = {
+  id: "event-123",
+  ownerId: "user-owner-123",
+  title: "Jazz evening in the center",
+  description: "Live jazz with local musicians. Cozy atmosphere.",
+  address: "Bergmannstr. 10, 10961 Berlin",
+  startsAt: "2026-09-20T19:00:00.000Z",
+  category: "jam",
+  maxParticipants: 20,
+  contactInfo: "tg: @jazz_lover",
+  entryPrice: 15,
+  isDonationBased: false,
+  donationInfo: null,
+  createdAt: "2026-09-01T10:00:00.000Z",
+  updatedAt: "2026-09-01T10:00:00.000Z",
+};
