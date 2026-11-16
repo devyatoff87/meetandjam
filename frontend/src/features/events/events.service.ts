@@ -7,15 +7,10 @@ import type {
   UpdateEventInput,
   MessageResponse,
 } from "@/lib/api/types";
-
+import { log, queryParamsBuilder } from "../../lib/utils";
+log;
 export function getEvents(query: EventsQuery = {}) {
-  const qs = new URLSearchParams();
-  if (query.page) qs.set("page", String(query.page));
-  if (query.limit) qs.set("limit", String(query.limit));
-  if (query.search) qs.set("search", query.search);
-  if (query.category) qs.set("category", query.category);
-
-  const suffix = qs.toString() ? `?${qs}` : "";
+  const suffix = queryParamsBuilder(query);
   return apiFetch<PaginatedEvents>(`/events/${suffix}`);
 }
 
@@ -24,13 +19,7 @@ export function getEvent(eventId: string) {
 }
 
 export function getMyEvents(token: string, query: EventsQuery = {}) {
-  const qs = new URLSearchParams();
-  if (query.page) qs.set("page", String(query.page));
-  if (query.limit) qs.set("limit", String(query.limit));
-  if (query.search) qs.set("search", query.search);
-  if (query.category) qs.set("category", query.category);
-
-  const suffix = qs.toString() ? `?${qs}` : "";
+  const suffix = queryParamsBuilder(query);
   return apiFetch<PaginatedEvents>(`/events/me${suffix}`, { token });
 }
 
