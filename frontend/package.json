@@ -14,7 +14,7 @@
     "api:generate": "openapi-typescript http://localhost:3000/docs/json -o src/lib/api/generated/schema.d.ts",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui --api 3002"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
