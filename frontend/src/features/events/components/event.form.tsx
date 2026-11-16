@@ -78,7 +78,7 @@ export function EventForm({ form, submitLabel, pendingLabel, cancelFn }: EventFo
       <Button type="submit" disabled={isPending} className="w-full">
         {isPending ? pendingLabel : submitLabel}
       </Button>
-      <Button onClick={cancelFn} className="w-full">
+      <Button onClick={cancelFn} type="button" className="w-full">
         Cancel
       </Button>
     </form>
