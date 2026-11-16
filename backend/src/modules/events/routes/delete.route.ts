@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
-import { eventIdSchema, messageResponseSchema } from "../events.schemas";
+import { eventIdSchema, noDataResponseSchema } from "../events.schemas";
 import { EventsService } from "../events.services";
 import { sendBusinessError } from "../../../helpers/errors";
 import z from "zod";
@@ -15,7 +15,7 @@ export const deleteEventRoute: FastifyPluginAsync = async (app) => {
       schema: {
         params: eventIdSchema,
         response: {
-          200: messageResponseSchema,
+          204: noDataResponseSchema,
         },
       },
     },
@@ -24,7 +24,7 @@ export const deleteEventRoute: FastifyPluginAsync = async (app) => {
 
       try {
         await eventsService.delete(eventId, request.user.sub);
-        return reply.code(200).send({ message: "Event deleted" });
+        return reply.code(204).send();
       } catch (error: any) {
         return sendBusinessError(
           reply,
