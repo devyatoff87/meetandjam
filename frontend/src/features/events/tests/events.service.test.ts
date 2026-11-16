@@ -1,10 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { deleteEvent, getEvents } from "../events.service";
+import { createEvent, deleteEvent, getEvents, updateEvent } from "../events.service";
 import { apiFetch } from "@/lib/api/client";
+import { mockEventsSimple, mockEventDetails } from "./event.mocks";
 
 vi.mock("@/lib/api/client", () => ({
   apiFetch: vi.fn(),
 }));
+
+const event = mockEventsSimple.full;
+const eventResponse = mockEventDetails;
+const token = "my-token";
+const eventId = "id-123";
 
 describe("getEvents", () => {
   beforeEach(() => {
@@ -42,12 +48,39 @@ describe("deleteEvent", () => {
 
     expect(apiFetch).toHaveBeenCalledWith("/events/abc-123", {
       method: "DELETE",
-      token: "my-token",
+      token: token,
     });
   });
 
   it("returns undefined (204 no content)", async () => {
-    const result = await deleteEvent("abc-123", "my-token");
+    const result = await deleteEvent(eventId, token);
     expect(result).toBeUndefined();
+  });
+});
+
+describe("create- and updateEvent", () => {
+  beforeEach(() => {
+    vi.mocked(apiFetch).mockResolvedValue(eventResponse);
+  });
+
+  it("calls apiFetch with propper arguments for createEvent", async () => {
+    const result = await createEvent(event, token);
+    expect(apiFetch).toHaveBeenCalledWith("/events/", {
+      method: "POST",
+      body: event,
+      token: token,
+    });
+    expect(result).toEqual(eventResponse);
+  });
+
+  it("calls apiFetch with propper arguments for updateEvent", async () => {
+    const eventTitle = { title: "Updated event title" };
+    const result = await updateEvent(eventId, eventTitle, token);
+    expect(apiFetch).toHaveBeenCalledWith(`/events/${eventId}`, {
+      method: "PATCH",
+      body: eventTitle,
+      token: token,
+    });
+    expect(result).toEqual(eventResponse);
   });
 });
