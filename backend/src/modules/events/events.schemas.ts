@@ -122,7 +122,7 @@ export const allEventsSchema = z.object({
   category: categorySchema.optional(),
 });
 
-// ===== RESPONSE SCHEMAS (упрощённые) =====
+// ===== RESPONSE SCHEMAS =====
 
 export const eventResponseSchema = z.object({
   id: z.string(),
@@ -160,9 +160,11 @@ export const participantsListResponseSchema = z.array(
   participantResponseSchema,
 );
 
-export const messageResponseSchema = z.object({
+export const leaveResponseSchema = z.object({
   message: z.string(),
 });
+
+export const noDataResponseSchema = z.null();
 
 export const joinedEventsResponseSchema = z.array(eventResponseSchema);
 
