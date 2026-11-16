@@ -1,5 +1,5 @@
 import { getEvents } from "@/features/events/events.service";
-import { EventList } from "@/features/components/event.list";
+import { EventList } from "@/features/events/components/event.list";
 import type { EventCategory } from "@/features/events/types";
 
 type SearchParams = {

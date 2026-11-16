@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApiError } from "@/lib/api/errors";
 import { EventFormValues, eventSchema } from "@/features/events/event.schema";
-import { EventForm } from "@/features/components/event.form";
+import { EventForm } from "@/features/events/components/event.form";
 import { Event } from "@/lib/api/types";
 import { toDatetimeLocal } from "@/lib/utils";
 import { useUpdateEvent } from "@/features/events/hooks/use.update.event";

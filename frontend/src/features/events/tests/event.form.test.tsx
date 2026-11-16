@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FormState, useForm } from "react-hook-form";
-import { EventForm } from "../../components/event.form";
+import { EventForm } from "../components/event.form";
 import { eventSchema } from "../event.schema";
 import { EventFormValues } from "../event.schema";
 import { mockEventsSimple } from "./event.mocks";

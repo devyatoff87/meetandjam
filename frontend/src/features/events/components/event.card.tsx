@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { Event } from "../events/types";
+import type { Event } from "../types";
 
 export function EventCard({ event }: { event: Event }) {
   return (

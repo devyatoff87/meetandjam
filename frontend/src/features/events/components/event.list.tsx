@@ -1,5 +1,5 @@
 import { EventCard } from "./event.card";
-import type { Event } from "../events/types";
+import type { Event } from "../types";
 
 export function EventList({ events }: { events: Event[] }) {
   if (events.length === 0) {

@@ -1,5 +1,5 @@
 import { getEvent } from "@/features/events/events.service";
-import { UpdateEventForm } from "./update.event.form";
+import { UpdateEventForm } from "../../../../../features/events/components/update.event.form";
 
 export default async function UpdateFormPage({ params }: { params: Promise<{ eventId: string }> }) {
   const { eventId } = await params;

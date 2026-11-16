@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getEvent } from "@/features/events/events.service";
-import { EventDetails } from "./event.details";
+import { EventDetails } from "../../../../features/events/components/event.details";
 
 export default async function EventPage({ params }: { params: Promise<{ eventId: string }> }) {
   const { eventId } = await params;
