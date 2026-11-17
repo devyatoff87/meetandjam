@@ -40,8 +40,6 @@ function renderEventForm({
       },
     });
 
-    console.log(errors);
-
     const form = {
       submitHandle: handleSubmit(onSubmit),
       register,
@@ -115,7 +113,7 @@ describe("Event form", () => {
     await user.type(screen.getByLabelText("Description"), description);
     await user.type(screen.getByLabelText("Address"), address);
     await user.selectOptions(screen.getByLabelText("Category"), category);
-    console.log(startsAt);
+
     fireEvent.change(screen.getByLabelText("Date and beginning time"), {
       target: { value: startsAt },
     });
@@ -131,7 +129,19 @@ describe("Event form", () => {
         address: address,
         category: category,
       }),
+
       expect.anything(),
     );
+  });
+
+  it("does not submit and shows validation errors when form is empty", async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderEventForm();
+
+    await user.click(screen.getByRole("button", { name: /create event/i }));
+
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    expect(await screen.findByText(/too small/i)).toBeInTheDocument();
   });
 });
