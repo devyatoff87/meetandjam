@@ -38,6 +38,21 @@ const eventErrors = {
 } as const;
 
 export class EventsService {
+  async getMembership(eventId: string, userId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+      select: ["id"],
+    });
+
+    if (!event) throw eventErrors.eventNotFound;
+
+    const participant = await this.participantRepository.findOne({
+      where: { eventId, userId },
+      select: ["id"],
+    });
+
+    return { isJoined: Boolean(participant) };
+  }
   private eventRepository = AppDataSource.getRepository(Event);
   private participantRepository = AppDataSource.getRepository(EventParticipant);
   private categoryRepository = AppDataSource.getRepository(Category);
