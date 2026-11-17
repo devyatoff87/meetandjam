@@ -10,6 +10,7 @@ import { updateEventRoute } from "./routes/update.route";
 import { oneEventRoute } from "./routes/event.route";
 import { usersEventsRoute } from "./routes/users.events.route";
 import { participantsRoute } from "./routes/participants.route";
+import { membershipRoute } from "./routes/memership.route";
 
 export const eventsRoutes: FastifyPluginAsync = async (app) => {
   app.register(createEventRoute);
@@ -25,4 +26,6 @@ export const eventsRoutes: FastifyPluginAsync = async (app) => {
   app.register(oneEventRoute);
   app.register(updateEventRoute);
   app.register(deleteEventRoute);
+
+  app.register(membershipRoute);
 };

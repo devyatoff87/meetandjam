@@ -124,6 +124,10 @@ export const allEventsSchema = z.object({
 
 // ===== RESPONSE SCHEMAS =====
 
+export const membershipResponseSchema = z.object({
+  isJoined: z.boolean(),
+});
+
 export const eventResponseSchema = z.object({
   id: z.string(),
   title: z.string(),
