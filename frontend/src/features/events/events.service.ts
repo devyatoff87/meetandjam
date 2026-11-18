@@ -6,6 +6,7 @@ import type {
   CreateEventInput,
   UpdateEventInput,
   MessageResponse,
+  MembershipResponse,
 } from "@/lib/api/types";
 import { log, queryParamsBuilder } from "../../lib/utils";
 log;
@@ -46,6 +47,12 @@ export function updateEvent(eventId: string, input: UpdateEventInput, token: str
 export function deleteEvent(eventId: string, token: string) {
   return apiFetch<MessageResponse>(`/events/${eventId}`, {
     method: "DELETE",
+    token,
+  });
+}
+
+export function getMembership(eventId: string, token: string) {
+  return apiFetch<MembershipResponse>(`/events/${eventId}/membership`, {
     token,
   });
 }
