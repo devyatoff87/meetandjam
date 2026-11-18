@@ -4,796 +4,796 @@
  */
 
 export interface paths {
-  "/auth/register": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": {
-            /** @example users@email.me */
-            email: string;
-            /** @example Password123!# */
-            password: string & string;
-            /** @example John Doe */
-            name: string;
-          };
+    "/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Default Response */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              token: string;
-              user: {
-                /** Format: uuid */
-                id: string;
-                /** @example users@email.me */
-                email: string;
-                /** @example John Doe */
-                name: string;
-              };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
             };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/auth/login": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": {
-            /** @example users@email.me */
-            email: string;
-            /** @example Password123!# */
-            password: string & string;
-          };
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              token: string;
-              user: {
-                /** Format: uuid */
-                id: string;
-                /** @example users@email.me */
-                email: string;
-                /** @example John Doe */
-                name: string;
-              };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @example users@email.me */
+                        email: string;
+                        /** @example Password123!# */
+                        password: string & (string);
+                        /** @example John Doe */
+                        name: string;
+                    };
+                };
             };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/auth/me": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              /** Format: uuid */
-              id: string;
-              /** @example users@email.me */
-              email: string;
-              /** @example John Doe */
-              name: string;
-              /** @example 2026-09-12T14:35:22.123Z */
-              createdAt: string;
-              /** @example 2026-09-12T14:35:22.123Z */
-              updatedAt: string;
+            responses: {
+                /** @description Default Response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            token: string;
+                            user: {
+                                /** Format: uuid */
+                                id: string;
+                                /** @example users@email.me */
+                                email: string;
+                                /** @example John Doe */
+                                name: string;
+                            };
+                        };
+                    };
+                };
             };
-          };
         };
-      };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: {
-      parameters: {
-        query?: {
-          page?: number;
-          limit?: number;
-          search?: string;
-          category?: "jam" | "word" | "theater" | "standup" | "dance" | "another";
+    "/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              events: {
-                id: string;
-                title: string;
-                description: string;
-                maxParticipants: number | null;
-                contactInfo: string | null;
-                entryPrice: number | null;
-                isDonationBased: boolean;
-                donationInfo: string | null;
-                address: string;
-                startsAt: string;
-                /** @enum {string|null} */
-                category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
-                ownerId: string;
-                createdAt: string;
-                updatedAt: string;
-              }[];
-              total: number;
-              page: number;
-              limit: number;
-              totalPages: number;
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
             };
-          };
-        };
-      };
-    };
-    put?: never;
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": {
-            /** @example Jazz evening in the center */
-            title: string;
-            /** @example Live jazz with local musicians. Cozy atmosphere. */
-            description: string;
-            /** @example 50 */
-            maxParticipants?: number;
-            /** @example Bergmannstr. 10, 10961 Berlin */
-            address: string;
-            /** @example telegram: @jazz_organizer */
-            contactInfo?: string;
-            /** @example 2026-09-15T19:00:00+02:00 */
-            startsAt: string;
-            /** @example 10 */
-            entryPrice?: number;
-            /**
-             * @default false
-             * @example false
-             */
-            isDonationBased?: boolean;
-            /** @example Minimum donation: 5 EUR */
-            donationInfo?: string;
-            /**
-             * @example jam
-             * @enum {string}
-             */
-            category: "jam" | "word" | "theater" | "standup" | "dance" | "another";
-          };
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              id: string;
-              title: string;
-              description: string;
-              maxParticipants: number | null;
-              contactInfo: string | null;
-              entryPrice: number | null;
-              isDonationBased: boolean;
-              donationInfo: string | null;
-              address: string;
-              startsAt: string;
-              /** @enum {string|null} */
-              category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
-              ownerId: string;
-              createdAt: string;
-              updatedAt: string;
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @example users@email.me */
+                        email: string;
+                        /** @example Password123!# */
+                        password: string & (string);
+                    };
+                };
             };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/me": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: {
-      parameters: {
-        query?: {
-          page?: number;
-          limit?: number;
-          search?: string;
-          category?: "jam" | "word" | "theater" | "standup" | "dance" | "another";
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              events: {
-                id: string;
-                title: string;
-                description: string;
-                maxParticipants: number | null;
-                contactInfo: string | null;
-                entryPrice: number | null;
-                isDonationBased: boolean;
-                donationInfo: string | null;
-                address: string;
-                startsAt: string;
-                /** @enum {string|null} */
-                category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
-                ownerId: string;
-                createdAt: string;
-                updatedAt: string;
-              }[];
-              total: number;
-              page: number;
-              limit: number;
-              totalPages: number;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            token: string;
+                            user: {
+                                /** Format: uuid */
+                                id: string;
+                                /** @example users@email.me */
+                                email: string;
+                                /** @example John Doe */
+                                name: string;
+                            };
+                        };
+                    };
+                };
             };
-          };
         };
-      };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/joined": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              id: string;
-              title: string;
-              description: string;
-              maxParticipants: number | null;
-              contactInfo: string | null;
-              entryPrice: number | null;
-              isDonationBased: boolean;
-              donationInfo: string | null;
-              address: string;
-              startsAt: string;
-              /** @enum {string|null} */
-              category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
-              ownerId: string;
-              createdAt: string;
-              updatedAt: string;
-            }[];
-          };
+    "/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/join": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": {
-            /**
-             * Format: uuid
-             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
-             */
-            eventId: string;
-          };
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              id: string;
-              eventId: string;
-              userId: string;
-              joinedAt: string;
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
             };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/leave": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": {
-            /**
-             * Format: uuid
-             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
-             */
-            eventId: string;
-          };
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** @example users@email.me */
+                            email: string;
+                            /** @example John Doe */
+                            name: string;
+                            /** @example 2026-09-12T14:35:22.123Z */
+                            createdAt: string;
+                            /** @example 2026-09-12T14:35:22.123Z */
+                            updatedAt: string;
+                        };
+                    };
+                };
             };
-          };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/{eventId}/participants": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          eventId: string;
+    "/events/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              id: string;
-              name: string;
-              email: string;
-              joinedAt: string;
-            }[];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/user/{userId}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: {
-      parameters: {
-        query?: {
-          page?: number;
-          limit?: number;
-          search?: string;
-          category?: "jam" | "word" | "theater" | "standup" | "dance" | "another";
-        };
-        header?: never;
-        path: {
-          userId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              events: {
-                id: string;
-                title: string;
-                description: string;
-                maxParticipants: number | null;
-                contactInfo: string | null;
-                entryPrice: number | null;
-                isDonationBased: boolean;
-                donationInfo: string | null;
-                address: string;
-                startsAt: string;
-                /** @enum {string|null} */
-                category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
-                ownerId: string;
-                createdAt: string;
-                updatedAt: string;
-              }[];
-              total: number;
-              page: number;
-              limit: number;
-              totalPages: number;
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    search?: string;
+                    category?: "jam" | "word" | "theater" | "standup" | "dance" | "another";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
             };
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/{eventId}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          eventId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              id: string;
-              title: string;
-              description: string;
-              maxParticipants: number | null;
-              contactInfo: string | null;
-              entryPrice: number | null;
-              isDonationBased: boolean;
-              donationInfo: string | null;
-              address: string;
-              startsAt: string;
-              /** @enum {string|null} */
-              category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
-              ownerId: string;
-              createdAt: string;
-              updatedAt: string;
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            events: {
+                                id: string;
+                                title: string;
+                                description: string;
+                                maxParticipants: number | null;
+                                contactInfo: string | null;
+                                entryPrice: number | null;
+                                isDonationBased: boolean;
+                                donationInfo: string | null;
+                                address: string;
+                                startsAt: string;
+                                /** @enum {string|null} */
+                                category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
+                                ownerId: string;
+                                createdAt: string;
+                                updatedAt: string;
+                            }[];
+                            total: number;
+                            page: number;
+                            limit: number;
+                            totalPages: number;
+                        };
+                    };
+                };
             };
-          };
         };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          eventId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": null;
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          eventId: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": {
-            /** @example Jazz evening in the center */
-            title?: string;
-            /** @example Live jazz with local musicians. Cozy atmosphere. */
-            description?: string;
-            /** @example 50 */
-            maxParticipants?: number;
-            /** @example Bergmannstr. 10, 10961 Berlin */
-            address?: string;
-            /** @example telegram: @jazz_organizer */
-            contactInfo?: string;
-            /** @example 2026-09-15T19:00:00+02:00 */
-            startsAt?: string;
-            /** @example 10 */
-            entryPrice?: number;
-            /**
-             * @default false
-             * @example false
-             */
-            isDonationBased?: boolean;
-            /** @example Minimum donation: 5 EUR */
-            donationInfo?: string;
-            /**
-             * @example jam
-             * @enum {string}
-             */
-            category?: "jam" | "word" | "theater" | "standup" | "dance" | "another";
-          };
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              id: string;
-              title: string;
-              description: string;
-              maxParticipants: number | null;
-              contactInfo: string | null;
-              entryPrice: number | null;
-              isDonationBased: boolean;
-              donationInfo: string | null;
-              address: string;
-              startsAt: string;
-              /** @enum {string|null} */
-              category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
-              ownerId: string;
-              createdAt: string;
-              updatedAt: string;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
             };
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  "/events/{eventId}/membership": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          eventId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              isJoined: boolean;
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @example Jazz evening in the center */
+                        title: string;
+                        /** @example Live jazz with local musicians. Cozy atmosphere. */
+                        description: string;
+                        /** @example 50 */
+                        maxParticipants?: number;
+                        /** @example Bergmannstr. 10, 10961 Berlin */
+                        address: string;
+                        /** @example telegram: @jazz_organizer */
+                        contactInfo?: string;
+                        /** @example 2026-09-15T19:00:00+02:00 */
+                        startsAt: string;
+                        /** @example 10 */
+                        entryPrice?: number;
+                        /**
+                         * @default false
+                         * @example false
+                         */
+                        isDonationBased?: boolean;
+                        /** @example Minimum donation: 5 EUR */
+                        donationInfo?: string;
+                        /**
+                         * @example jam
+                         * @enum {string}
+                         */
+                        category: "jam" | "word" | "theater" | "standup" | "dance" | "another";
+                    };
+                };
             };
-          };
+            responses: {
+                /** @description Default Response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            title: string;
+                            description: string;
+                            maxParticipants: number | null;
+                            contactInfo: string | null;
+                            entryPrice: number | null;
+                            isDonationBased: boolean;
+                            donationInfo: string | null;
+                            address: string;
+                            startsAt: string;
+                            /** @enum {string|null} */
+                            category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
+                            ownerId: string;
+                            createdAt: string;
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
         };
-      };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
+    "/events/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    search?: string;
+                    category?: "jam" | "word" | "theater" | "standup" | "dance" | "another";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            events: {
+                                id: string;
+                                title: string;
+                                description: string;
+                                maxParticipants: number | null;
+                                contactInfo: string | null;
+                                entryPrice: number | null;
+                                isDonationBased: boolean;
+                                donationInfo: string | null;
+                                address: string;
+                                startsAt: string;
+                                /** @enum {string|null} */
+                                category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
+                                ownerId: string;
+                                createdAt: string;
+                                updatedAt: string;
+                            }[];
+                            total: number;
+                            page: number;
+                            limit: number;
+                            totalPages: number;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/joined": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            title: string;
+                            description: string;
+                            maxParticipants: number | null;
+                            contactInfo: string | null;
+                            entryPrice: number | null;
+                            isDonationBased: boolean;
+                            donationInfo: string | null;
+                            address: string;
+                            startsAt: string;
+                            /** @enum {string|null} */
+                            category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
+                            ownerId: string;
+                            createdAt: string;
+                            updatedAt: string;
+                        }[];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/join": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * Format: uuid
+                         * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                         */
+                        eventId: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            eventId: string;
+                            userId: string;
+                            joinedAt: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/leave": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * Format: uuid
+                         * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                         */
+                        eventId: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            message: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{eventId}/participants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    eventId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            name: string;
+                            email: string;
+                            joinedAt: string;
+                        }[];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/user/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    search?: string;
+                    category?: "jam" | "word" | "theater" | "standup" | "dance" | "another";
+                };
+                header?: never;
+                path: {
+                    userId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            events: {
+                                id: string;
+                                title: string;
+                                description: string;
+                                maxParticipants: number | null;
+                                contactInfo: string | null;
+                                entryPrice: number | null;
+                                isDonationBased: boolean;
+                                donationInfo: string | null;
+                                address: string;
+                                startsAt: string;
+                                /** @enum {string|null} */
+                                category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
+                                ownerId: string;
+                                createdAt: string;
+                                updatedAt: string;
+                            }[];
+                            total: number;
+                            page: number;
+                            limit: number;
+                            totalPages: number;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{eventId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    eventId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            title: string;
+                            description: string;
+                            maxParticipants: number | null;
+                            contactInfo: string | null;
+                            entryPrice: number | null;
+                            isDonationBased: boolean;
+                            donationInfo: string | null;
+                            address: string;
+                            startsAt: string;
+                            /** @enum {string|null} */
+                            category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
+                            ownerId: string;
+                            createdAt: string;
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    eventId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": null;
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    eventId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @example Jazz evening in the center */
+                        title?: string;
+                        /** @example Live jazz with local musicians. Cozy atmosphere. */
+                        description?: string;
+                        /** @example 50 */
+                        maxParticipants?: number;
+                        /** @example Bergmannstr. 10, 10961 Berlin */
+                        address?: string;
+                        /** @example telegram: @jazz_organizer */
+                        contactInfo?: string;
+                        /** @example 2026-09-15T19:00:00+02:00 */
+                        startsAt?: string;
+                        /** @example 10 */
+                        entryPrice?: number;
+                        /**
+                         * @default false
+                         * @example false
+                         */
+                        isDonationBased?: boolean;
+                        /** @example Minimum donation: 5 EUR */
+                        donationInfo?: string;
+                        /**
+                         * @example jam
+                         * @enum {string}
+                         */
+                        category?: "jam" | "word" | "theater" | "standup" | "dance" | "another";
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            title: string;
+                            description: string;
+                            maxParticipants: number | null;
+                            contactInfo: string | null;
+                            entryPrice: number | null;
+                            isDonationBased: boolean;
+                            donationInfo: string | null;
+                            address: string;
+                            startsAt: string;
+                            /** @enum {string|null} */
+                            category: "jam" | "word" | "theater" | "standup" | "dance" | "another" | null;
+                            ownerId: string;
+                            createdAt: string;
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/events/{eventId}/membership": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    eventId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            isJoined: boolean;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: never;
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    schemas: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;
