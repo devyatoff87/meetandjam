@@ -40,6 +40,9 @@ export type EventCategory = NonNullable<Event["category"]>;
 // PARTICIPATION
 // ============================================================
 
+export type MembershipResponse =
+  paths["/events/{eventId}/membership"]["get"]["responses"][200]["content"]["application/json"];
+
 export type EventParticipant =
   paths["/events/join"]["post"]["responses"][201]["content"]["application/json"];
 
