@@ -6,11 +6,33 @@ import { useMe } from "@/features/auth/hooks/use-me";
 import Link from "next/link";
 import { useDeleteEvent } from "@/features/events/hooks/use.delete.event";
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+
+const JoinButton = dynamic(() => import("./join.button"), { ssr: false });
 
 export function EventDetails({ event }: { event: Event }) {
-  const { data: me } = useMe();
+  const { data: me, isLoading: isMeLoading } = useMe();
   const isYourEvent = me?.id === event.ownerId;
   const mutation = useDeleteEvent();
+
+  const renderYourEventButtons = () => {
+    return (
+      <div className="flex justify-center gap-12 border-t border-gray-100 p-4">
+        <Button asChild>
+          <Link href={`/events/update/${event.id}`}>Update</Link>
+        </Button>
+        <Button
+          disabled={mutation.isPending}
+          onClick={() => {
+            mutation.mutate(event.id);
+          }}
+        >
+          {mutation.isPending ? "Deleting..." : "Delete"}
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -55,21 +77,11 @@ export function EventDetails({ event }: { event: Event }) {
           <p>{event.contactInfo}</p>
         </div>
       )}
-      {isYourEvent && (
-        <div className="flex justify-center gap-12 border-t border-gray-100 p-4">
-          <Button asChild>
-            <Link href={`/events/update/${event.id}`}>Update</Link>
-          </Button>
-          <Button
-            disabled={mutation.isPending}
-            onClick={() => {
-              mutation.mutate(event.id);
-            }}
-          >
-            {mutation.isPending ? "Deleting..." : "Delete"}
-          </Button>
-        </div>
-      )}
+
+      <div className="flex justify-center gap-12 border-t border-gray-100 p-4">
+        {isYourEvent && renderYourEventButtons()}
+        {!isYourEvent && <JoinButton event={event} />}
+      </div>
     </div>
   );
 }
