@@ -1,13 +1,15 @@
+"use client";
+
 import { getToken } from "@/lib/auth/token";
 import { getMembership } from "../events.service";
 import { useQuery } from "@tanstack/react-query";
 
-export default function useMemmbership(eventId: string) {
+export default function useMembership(eventId: string) {
   const token = getToken();
   return useQuery({
-    queryKey: ["membership"],
+    queryKey: ["membership", eventId],
     queryFn: () => {
-      getMembership(eventId, token!);
+      return getMembership(eventId, token!);
     },
     enabled: !!token,
   });
