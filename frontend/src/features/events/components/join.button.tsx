@@ -1,26 +1,46 @@
 "use client";
 
-import { useMe } from "@/features/auth/hooks/use-me";
 import { Event } from "../types";
 import useMembership from "../hooks/use.membership.event";
 import { Button } from "@/components/ui/button";
+import { EventUserOperation } from "../types";
+import useJoin from "../hooks/use.join.events";
 
-export default function JoinButton({ event }: { event: Event }) {
-  const { data: me, isLoading: isMeLoading } = useMe();
-  const { data: membership, isError, isLoading: isMembershipLoading } = useMembership(event.id);
-  const isJoined = membership?.isJoined;
+type JoinButtonProps = {
+  event: Event;
+  callback?: (msg: string) => void;
+};
 
-  if (me?.id === event.ownerId || isMeLoading) {
-    return null;
-  }
+export default function JoinButton({ event, callback }: JoinButtonProps) {
+  const { data, error: isJoinedError, isLoading: isJoinedLoading } = useMembership(event.id);
 
-  if (isMembershipLoading) {
+  const isJoined = data?.isJoined;
+
+  const mutation = useJoin();
+
+  if (isJoinedLoading) {
     return <Button disabled>Loading...</Button>;
   }
 
-  if (isError) {
+  if (isJoinedError) {
     return <Button disabled>Error occurred</Button>;
   }
 
-  return <Button>{isJoined ? "Leave" : "Join"}</Button>;
+  const handleSubmit = (operation: EventUserOperation = "join") => {
+    mutation.mutate({
+      eventId: event.id,
+      operation,
+    });
+  };
+
+  return (
+    <Button
+      onClick={() => {
+        isJoined !== undefined && !isJoined && handleSubmit();
+        isJoined !== undefined && isJoined && handleSubmit("leave");
+      }}
+    >
+      {isJoined !== undefined && !isJoined ? "Join" : "Leave"}
+    </Button>
+  );
 }
