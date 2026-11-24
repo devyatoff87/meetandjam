@@ -5,18 +5,42 @@ import useMembership from "../hooks/use.membership.event";
 import { Button } from "@/components/ui/button";
 import { EventUserOperation } from "../types";
 import useJoin from "../hooks/use.join.events";
+import { useRouter } from "next/navigation";
+import { Me } from "../../../lib/api/types";
 
 type JoinButtonProps = {
   event: Event;
-  callback?: (msg: string) => void;
+  me: Me;
 };
 
-export default function JoinButton({ event, callback }: JoinButtonProps) {
+export default function JoinButton({ event, me }: JoinButtonProps) {
+  const router = useRouter();
+
   const { data, error: isJoinedError, isLoading: isJoinedLoading } = useMembership(event.id);
 
   const isJoined = data?.isJoined;
 
   const mutation = useJoin();
+
+  const handleSubmit = (operation: EventUserOperation = "join") => {
+    mutation.mutate({
+      eventId: event.id,
+      operation,
+    });
+  };
+
+  if (!me)
+    return (
+      <Button
+        onClick={() => {
+          router.push("/login");
+        }}
+      >
+        Join Event
+      </Button>
+    );
+
+  if (me?.id === event.ownerId) return;
 
   if (isJoinedLoading) {
     return <Button disabled>Loading...</Button>;
@@ -25,13 +49,6 @@ export default function JoinButton({ event, callback }: JoinButtonProps) {
   if (isJoinedError) {
     return <Button disabled>Error occurred</Button>;
   }
-
-  const handleSubmit = (operation: EventUserOperation = "join") => {
-    mutation.mutate({
-      eventId: event.id,
-      operation,
-    });
-  };
 
   return (
     <Button

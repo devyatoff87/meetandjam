@@ -11,7 +11,7 @@ import dynamic from "next/dynamic";
 const JoinButton = dynamic(() => import("./join.button"), { ssr: false });
 
 export function EventDetails({ event }: { event: Event }) {
-  const { data: me, isLoading: isMeLoading } = useMe();
+  const { data: me } = useMe();
   const isYourEvent = me?.id === event.ownerId;
   const mutation = useDeleteEvent();
 
@@ -80,7 +80,7 @@ export function EventDetails({ event }: { event: Event }) {
 
       <div className="flex justify-center gap-12 border-t border-gray-100 p-4">
         {isYourEvent && renderYourEventButtons()}
-        {!isYourEvent && <JoinButton event={event} />}
+        {<JoinButton event={event} me={me!} />}
       </div>
     </div>
   );
