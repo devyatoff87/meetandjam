@@ -8,8 +8,8 @@ import type {
   MessageResponse,
   MembershipResponse,
 } from "@/lib/api/types";
-import { log, queryParamsBuilder } from "../../lib/utils";
-log;
+import { queryParamsBuilder } from "../../lib/utils";
+import { EventUserOperation } from "./types";
 export function getEvents(query: EventsQuery = {}) {
   const suffix = queryParamsBuilder(query);
   return apiFetch<PaginatedEvents>(`/events/${suffix}`);
@@ -53,6 +53,14 @@ export function deleteEvent(eventId: string, token: string) {
 
 export function getMembership(eventId: string, token: string) {
   return apiFetch<MembershipResponse>(`/events/${eventId}/membership`, {
+    token,
+  });
+}
+
+export function joinEvent(eventId: string, token: string, operation: EventUserOperation = "join") {
+  return apiFetch("/events/" + operation, {
+    method: "POST",
+    body: { eventId: eventId },
     token,
   });
 }

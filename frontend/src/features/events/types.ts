@@ -8,3 +8,5 @@ export type EventsQuery = {
   search?: string;
   category?: EventCategory;
 };
+
+export type EventUserOperation = "join" | "leave";
