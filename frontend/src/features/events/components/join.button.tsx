@@ -6,17 +6,17 @@ import { Button } from "@/components/ui/button";
 import { EventUserOperation } from "../types";
 import useJoin from "../hooks/use.join.events";
 import { useRouter } from "next/navigation";
-import { Me } from "../../../lib/api/types";
+import { Me } from "@/lib/api/types";
 
 type JoinButtonProps = {
   event: Event;
-  me: Me;
+  me: Me | undefined;
 };
 
 export default function JoinButton({ event, me }: JoinButtonProps) {
   const router = useRouter();
 
-  const { data, error: isJoinedError, isLoading: isJoinedLoading } = useMembership(event.id);
+  const { data, isError: isJoinedError, isLoading: isJoinedLoading } = useMembership(event.id);
 
   const isJoined = data?.isJoined;
 
