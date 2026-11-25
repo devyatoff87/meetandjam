@@ -1,6 +1,6 @@
 import { getEvents } from "@/features/events/events.service";
-import { EventList } from "@/features/events/components/event.list";
 import type { EventCategory } from "@/features/events/types";
+import { EventsListWrapper } from "@/features/events/components/events.list.wrapper";
 
 type SearchParams = {
   page?: string;
@@ -14,7 +14,6 @@ export default async function EventsPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  console.log(params);
 
   const page = Number(params.page ?? 1);
   const data = await getEvents({
@@ -27,7 +26,7 @@ export default async function EventsPage({
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-6 text-3xl font-bold">Events</h1>
-      <EventList events={data.events} />
+      <EventsListWrapper events={data.events} />
     </div>
   );
 }
