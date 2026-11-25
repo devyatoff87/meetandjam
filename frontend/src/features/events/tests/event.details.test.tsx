@@ -5,25 +5,28 @@ import { EventDetails } from "../components/event.details";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useDeleteEvent } from "../hooks/use.delete.event";
 import { mockEventDetails } from "./event.mocks";
+import useMembership from "../hooks/use.membership.event";
+import useJoin from "../hooks/use.join.events";
 
-// Мокаем хуки
 vi.mock("@/features/auth/hooks/use-me");
 vi.mock("../hooks/use.delete.event");
+vi.mock("../hooks/use.membership.event");
+vi.mock("../hooks/use.join.events");
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(() => ({ push: vi.fn() })),
+}));
 
 const event = mockEventDetails;
 const mutate = vi.fn();
 
-vi.mock("@/lib/env", () => ({
-  env: { NEXT_PUBLIC_API_URL: "http://localhost:3000" },
-}));
-
-// Хелпер для рендера с разным состоянием юзера
 function renderEventDetails(me: { id: string } | undefined) {
   vi.mocked(useMe).mockReturnValue({ data: me } as any);
   vi.mocked(useDeleteEvent).mockReturnValue({
     mutate,
     isPending: false,
   } as any);
+  vi.mocked(useMembership).mockReturnValue({ data: { isJoined: false }, isLoading: false } as any);
+  vi.mocked(useJoin).mockReturnValue({ mutate: vi.fn(), isPending: false } as any);
 
   render(<EventDetails event={event} />);
 }
@@ -44,17 +47,14 @@ describe("EventDetails", () => {
   });
 
   it("shows owner UI when current user is the owner", () => {
-    // Передаем ID, который совпадает с ownerId ивента
     renderEventDetails({ id: event.ownerId });
 
     expect(screen.getByText(/your event/i)).toBeInTheDocument();
-    // Update - это ссылка (Link), Delete - кнопка (Button)
     expect(screen.getByRole("link", { name: /update/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
   });
 
   it("hides owner UI when current user is not the owner", () => {
-    // Передаем чужой ID
     renderEventDetails({ id: "other-user-id" });
 
     expect(screen.queryByText(/your event/i)).not.toBeInTheDocument();
@@ -73,10 +73,8 @@ describe("EventDetails", () => {
     const user = userEvent.setup();
     renderEventDetails({ id: event.ownerId });
 
-    // Ищем кнопку удаления
     await user.click(screen.getByRole("button", { name: /delete/i }));
 
-    // Проверяем, что хук удаления был вызван с правильным ID
     expect(mutate).toHaveBeenCalledWith(event.id);
   });
 });

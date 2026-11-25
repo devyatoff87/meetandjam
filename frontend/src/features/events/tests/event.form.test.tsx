@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { FormState, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { EventForm } from "../components/event.form";
 import { eventSchema } from "../event.schema";
 import { EventFormValues } from "../event.schema";
@@ -15,6 +15,8 @@ type RenderEventFormProps = {
   pendingLabel?: string;
   errorMessage?: string | null;
 };
+
+const errorMsgToSmall = "Too small: expected string to have >=8 characters";
 
 function renderEventForm({
   isPending = false,
@@ -142,6 +144,7 @@ describe("Event form", () => {
 
     expect(onSubmit).not.toHaveBeenCalled();
 
-    expect(await screen.findByText(/too small/i)).toBeInTheDocument();
+    const errors = await screen.findAllByText(/too small/i);
+    expect(errors.length).toBeGreaterThan(0);
   });
 });
