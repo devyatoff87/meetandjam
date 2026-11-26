@@ -1,7 +1,13 @@
 import z from "zod";
 import { CATEGORY_SLUGS } from "../../types/categories";
 
-// ===== FIELD SCHEMAS (BODY) =====
+// ===== FIELD SCHEMAS =====
+
+const uuidField = z
+  .uuid({ message: "Invalid UUID format" })
+  .meta({ example: "3fa85f64-5717-4562-b3fc-2c963f66afa6" });
+
+const categorySchema = z.enum(CATEGORY_SLUGS).meta({ example: "jam" });
 
 const titleSchema = z
   .string({ message: "Title is required" })
@@ -63,7 +69,30 @@ const donationInfoSchema = z
   .optional()
   .meta({ example: "Minimum donation: 5 EUR" });
 
-const categorySchema = z.enum(CATEGORY_SLUGS).meta({ example: "jam" });
+// ===== PARAMS SCHEMAS =====
+
+export const eventIdSchema = z.object({
+  eventId: uuidField,
+});
+
+export const userIdSchema = z.object({
+  userId: uuidField,
+});
+
+// ===== QUERY SCHEMAS =====
+
+export const allEventsSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1).meta({ example: 1 }),
+  limit: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(50)
+    .default(10)
+    .meta({ example: 10 }),
+  search: z.string().optional().default("").meta({ example: "jazz" }),
+  category: categorySchema.optional(),
+});
 
 // ===== BODY SCHEMAS =====
 
@@ -93,33 +122,13 @@ export const updateEventSchema = z.object({
   category: categorySchema.optional(),
 });
 
-// ===== PARAMS SCHEMAS =====
-
-const uuidField = z
-  .uuid({ message: "Invalid UUID format" })
-  .meta({ example: "3fa85f64-5717-4562-b3fc-2c963f66afa6" });
-
-export const eventIdSchema = z.object({
+export const joinEventSchema = z.object({
   eventId: uuidField,
-});
-
-export const userIdSchema = z.object({
-  userId: uuidField,
-});
-
-// ===== QUERY SCHEMAS =====
-
-export const allEventsSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1).meta({ example: 1 }),
-  limit: z.coerce
-    .number()
-    .int()
-    .min(1)
-    .max(50)
-    .default(10)
-    .meta({ example: 10 }),
-  search: z.string().optional().default("").meta({ example: "jazz" }),
-  category: categorySchema.optional(),
+  note: z
+    .string()
+    .trim()
+    .min(2, { message: "Note must be at least 2 characters" })
+    .max(64, { message: "Note must not exceed 64 characters" }),
 });
 
 // ===== RESPONSE SCHEMAS =====
@@ -158,6 +167,7 @@ export const participantResponseSchema = z.object({
   name: z.string(),
   email: z.string(),
   joinedAt: z.string(),
+  note: z.string().max(64).nullable(),
 });
 
 export const participantsListResponseSchema = z.array(

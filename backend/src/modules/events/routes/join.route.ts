@@ -1,5 +1,9 @@
 import { FastifyPluginAsync } from "fastify";
-import { eventIdSchema, joinResponseSchema } from "../events.schemas";
+import {
+  eventIdSchema,
+  joinEventSchema,
+  joinResponseSchema,
+} from "../events.schemas";
 import { EventsService } from "../events.services";
 import { sendBusinessError } from "../../../helpers/errors";
 import z from "zod";
@@ -11,7 +15,7 @@ export const joinEventRoute: FastifyPluginAsync = async (app) => {
     {
       preHandler: [app.authenticate],
       schema: {
-        body: eventIdSchema,
+        body: joinEventSchema,
         response: { 201: joinResponseSchema },
       },
     },
