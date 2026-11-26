@@ -24,6 +24,9 @@ export class EventParticipant {
   @Column({ type: "uuid" })
   userId!: string;
 
+  @Column({ type: "varchar", length: 64, nullable: true })
+  note!: string | null;
+
   @ManyToOne(() => Event, (event) => event.participants, {
     onDelete: "CASCADE",
   })
