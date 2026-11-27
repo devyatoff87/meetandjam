@@ -102,20 +102,30 @@ export default function JoinForm({ event, me }: JoinButtonProps) {
         handleSubmit();
       }}
     >
-      <Button>{isJoined !== undefined && !isJoined ? "Join" : "Leave"}</Button>
       {!isJoined && (
-        <label htmlFor="note">
+        <fieldset>
+          <label className="mb-1 block" htmlFor="note">
+            Your role or props you'll bring with:
+          </label>
           <input
+            className={cn(
+              "mb-4 block w-100 rounded-sm border border-gray-200 p-1",
+              error && "border-red-500",
+            )}
             value={note}
             type="text"
             name="note"
+            placeholder="guitarist / brushes / microphone / nothing..."
             onChange={(e) => {
               setNote(e.target.value);
             }}
           />
-          Your role or inventar you might bring with
-        </label>
+        </fieldset>
       )}
+      <Button disabled={note === "" && !isJoined}>
+        {isJoined !== undefined && !isJoined ? "Join" : "Leave"}
+      </Button>
+
       <div className={cn("mt-2", error ? "text-red-500" : "text-green-500")}>
         {message && message}
       </div>

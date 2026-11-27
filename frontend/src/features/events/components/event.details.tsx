@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useDeleteEvent } from "@/features/events/hooks/use.delete.event";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
+import { Separator } from "@/components/ui/separator";
 
 const JoinForm = dynamic(() => import("./join.form"), { ssr: false });
 
@@ -17,7 +18,7 @@ export function EventDetails({ event }: { event: Event }) {
 
   const renderYourEventButtons = () => {
     return (
-      <div className="flex justify-center gap-12 border-t border-gray-100 p-4">
+      <div className="flex gap-12">
         <Button asChild>
           <Link href={`/events/update/${event.id}`}>Update</Link>
         </Button>
@@ -77,11 +78,13 @@ export function EventDetails({ event }: { event: Event }) {
           <p>{event.contactInfo}</p>
         </div>
       )}
+      <Separator />
 
-      <div className="flex justify-center gap-12 border-t border-gray-100 p-4">
+      <div className="mt-4 border-gray-100">
         {isYourEvent && renderYourEventButtons()}
         {!isYourEvent && (
           <div>
+            <h2 className="mb-4 text-2xl font-bold"> Join event as participant</h2>{" "}
             <JoinForm event={event} me={me} />
           </div>
         )}
