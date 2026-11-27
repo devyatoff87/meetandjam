@@ -7,15 +7,13 @@ import Link from "next/link";
 import { useDeleteEvent } from "@/features/events/hooks/use.delete.event";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
-import { useState } from "react";
 
-const JoinButton = dynamic(() => import("./join.button"), { ssr: false });
+const JoinForm = dynamic(() => import("./join.form"), { ssr: false });
 
 export function EventDetails({ event }: { event: Event }) {
   const { data: me } = useMe();
   const isYourEvent = me?.id === event.ownerId;
   const mutation = useDeleteEvent();
-  const [note, setNote] = useState("");
 
   const renderYourEventButtons = () => {
     return (
@@ -82,18 +80,11 @@ export function EventDetails({ event }: { event: Event }) {
 
       <div className="flex justify-center gap-12 border-t border-gray-100 p-4">
         {isYourEvent && renderYourEventButtons()}
-        {
+        {!isYourEvent && (
           <div>
-            <JoinButton note={note} event={event} me={me!} />
-            <input
-              type="text"
-              name="note"
-              onChange={(e) => {
-                setNote(e.target.value);
-              }}
-            />
+            <JoinForm event={event} me={me} />
           </div>
-        }
+        )}
       </div>
     </div>
   );
