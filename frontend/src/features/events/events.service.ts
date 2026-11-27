@@ -9,7 +9,6 @@ import type {
   MembershipResponse,
 } from "@/lib/api/types";
 import { queryParamsBuilder } from "../../lib/utils";
-import { EventUserOperation } from "./types";
 export function getEvents(query: EventsQuery = {}) {
   const suffix = queryParamsBuilder(query);
   return apiFetch<PaginatedEvents>(`/events/${suffix}`);
@@ -63,6 +62,16 @@ export function joinEvent(eventId: string, note: string, token: string) {
     body: {
       eventId,
       note,
+    },
+    token,
+  });
+}
+
+export function leaveEvent(eventId: string, token: string) {
+  return apiFetch("/events/leave", {
+    method: "POST",
+    body: {
+      eventId,
     },
     token,
   });
