@@ -1,16 +1,12 @@
 import { FastifyPluginAsync } from "fastify";
-import {
-  eventIdSchema,
-  joinEventSchema,
-  joinResponseSchema,
-} from "../events.schemas";
+import { joinEventSchema, joinResponseSchema } from "../events.schemas";
 import { EventsService } from "../events.services";
 import { sendBusinessError } from "../../../helpers/errors";
 import z from "zod";
 
 export const joinEventRoute: FastifyPluginAsync = async (app) => {
   const eventsService = new EventsService();
-  app.post<{ Body: z.infer<typeof eventIdSchema> }>(
+  app.post<{ Body: z.infer<typeof joinEventSchema> }>(
     "/join",
     {
       preHandler: [app.authenticate],
@@ -20,7 +16,7 @@ export const joinEventRoute: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      const { eventId } = request.body;
+      const { eventId, note } = request.body;
       const userId = request.user.sub;
 
       try {
@@ -28,6 +24,7 @@ export const joinEventRoute: FastifyPluginAsync = async (app) => {
           eventId,
           userId,
           "join",
+          note,
         );
         return reply.code(201).send(participant);
       } catch (error: any) {

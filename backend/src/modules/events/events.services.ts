@@ -215,6 +215,7 @@ export class EventsService {
     eventId: string,
     userId: string,
     operation: "join" | "leave",
+    note?: string,
   ) {
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
@@ -232,6 +233,7 @@ export class EventsService {
       const saved = await this.participantRepository.save({
         eventId,
         userId,
+        note: note ?? null,
       });
 
       return {
@@ -301,6 +303,7 @@ export class EventsService {
       name: p.user.name,
       email: p.user.email,
       joinedAt: p.joinedAt.toISOString(),
+      note: p.note ?? null,
     }));
   }
 
