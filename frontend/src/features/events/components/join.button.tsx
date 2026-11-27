@@ -11,9 +11,10 @@ import { Me } from "@/lib/api/types";
 type JoinButtonProps = {
   event: Event;
   me: Me | undefined;
+  note: string;
 };
 
-export default function JoinButton({ event, me }: JoinButtonProps) {
+export default function JoinButton({ event, me, note }: JoinButtonProps) {
   const router = useRouter();
 
   const { data, isError: isJoinedError, isLoading: isJoinedLoading } = useMembership(event.id);
@@ -26,6 +27,7 @@ export default function JoinButton({ event, me }: JoinButtonProps) {
     mutation.mutate({
       eventId: event.id,
       operation,
+      note,
     });
   };
 
