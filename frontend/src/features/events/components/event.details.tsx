@@ -8,6 +8,7 @@ import { useDeleteEvent } from "@/features/events/hooks/use.delete.event";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { Separator } from "@/components/ui/separator";
+import { ParticipantList } from "./event.participants";
 
 const JoinForm = dynamic(() => import("./join.form"), { ssr: false });
 
@@ -80,14 +81,21 @@ export function EventDetails({ event }: { event: Event }) {
       )}
       <Separator />
 
-      <div className="mt-4 border-gray-100">
-        {isYourEvent && renderYourEventButtons()}
-        {!isYourEvent && (
-          <div>
-            <h2 className="mb-4 text-2xl font-bold"> Join event as participant</h2>{" "}
-            <JoinForm event={event} me={me} />
+      <div className="mt-4 flex gap-2">
+        <div className="w-[50%]">
+          <ParticipantList eventId={event.id} />
+        </div>
+        <div className="w-[50%]">
+          <div className="border-gray-100">
+            {isYourEvent && renderYourEventButtons()}
+            {!isYourEvent && (
+              <div>
+                <h2 className="text-2xl font-bold"> Join event as participant</h2>
+                <JoinForm event={event} me={me} />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
