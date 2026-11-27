@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Me } from "@/lib/api/types";
 import { useState } from "react";
 import useLeave from "../hooks/use.leave.events";
-import { cn } from "../../../lib/utils";
+import { cn } from "@/lib/utils";
 
 type JoinButtonProps = {
   event: Event;
