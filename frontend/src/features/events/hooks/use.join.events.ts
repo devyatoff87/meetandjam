@@ -3,12 +3,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getToken } from "@/lib/auth/token";
 import { joinEvent } from "../events.service";
-import { EventUserOperation } from "../types";
 
 type UseJoin = {
   eventId: string;
   note: string;
-  operation: EventUserOperation;
 };
 
 export default function useJoin() {
@@ -16,13 +14,15 @@ export default function useJoin() {
 
   return useMutation({
     mutationFn: (props: UseJoin) => {
-      const { eventId, operation, note } = props;
+      const { eventId, note } = props;
       const token = getToken();
       if (!token) throw new Error("No token");
-      return joinEvent(eventId, note, token, operation);
+      return joinEvent(eventId, note, token);
     },
-    onSuccess: (data, { eventId }) => {
+    onSuccess: (_data, { eventId }) => {
       queryClient.invalidateQueries({ queryKey: ["membership", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["participants", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["joined"] });
     },
   });
 }
