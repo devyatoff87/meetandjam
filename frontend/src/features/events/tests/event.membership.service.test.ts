@@ -1,43 +1,56 @@
 import { apiFetch } from "@/lib/api/client";
-import { getMembership, joinEvent } from "../events.service";
+import { getMembership, joinEvent, leaveEvent } from "../events.service";
 
 vi.mock("@/lib/api/client");
 
 const eventId = "event-123";
 const token = "my-token";
+const note = "Acoustic guitar";
 
 describe("joinEvent", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.mocked(apiFetch).mockResolvedValue({});
   });
 
-  it("calls apiFetch with POST /events/join for join operation", async () => {
-    await joinEvent(eventId, token, "join");
+  it("calls apiFetch with POST /events/join, eventId, note and token", async () => {
+    await joinEvent(eventId, note, token);
 
     expect(apiFetch).toHaveBeenCalledWith("/events/join", {
       method: "POST",
-      body: { eventId: eventId },
-      token: token,
+      body: { eventId, note },
+      token,
     });
   });
+});
 
-  it("calls apiFetch with POST /events/leave for leave operation", async () => {
-    await joinEvent(eventId, token, "leave");
+describe("leaveEvent", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(apiFetch).mockResolvedValue({});
+  });
+
+  it("calls apiFetch with POST /events/leave, eventId and token", async () => {
+    await leaveEvent(eventId, token);
 
     expect(apiFetch).toHaveBeenCalledWith("/events/leave", {
       method: "POST",
-      body: { eventId: eventId },
-      token: token,
+      body: { eventId },
+      token,
     });
   });
 });
 
 describe("getMembership", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("calls apiFetch with GET and token", async () => {
     await getMembership(eventId, token);
 
     expect(apiFetch).toHaveBeenCalledWith(`/events/${eventId}/membership`, {
-      token: token,
+      token,
     });
   });
 
