@@ -5,15 +5,21 @@ import { getToken } from "@/lib/auth/token";
 import { joinEvent } from "../events.service";
 import { EventUserOperation } from "../types";
 
+type UseJoin = {
+  eventId: string;
+  note: string;
+  operation: EventUserOperation;
+};
+
 export default function useJoin() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (props: { eventId: string; operation: EventUserOperation }) => {
-      const { eventId, operation } = props;
+    mutationFn: (props: UseJoin) => {
+      const { eventId, operation, note } = props;
       const token = getToken();
       if (!token) throw new Error("No token");
-      return joinEvent(eventId, token, operation);
+      return joinEvent(eventId, note, token, operation);
     },
     onSuccess: (data, { eventId }) => {
       queryClient.invalidateQueries({ queryKey: ["membership", eventId] });
