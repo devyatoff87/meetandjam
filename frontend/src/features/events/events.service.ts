@@ -7,6 +7,7 @@ import type {
   UpdateEventInput,
   MessageResponse,
   MembershipResponse,
+  Participant,
 } from "@/lib/api/types";
 import { queryParamsBuilder } from "../../lib/utils";
 export function getEvents(query: EventsQuery = {}) {
@@ -75,4 +76,8 @@ export function leaveEvent(eventId: string, token: string) {
     },
     token,
   });
+}
+
+export function getParticipants(eventId: string) {
+  return apiFetch<Participant[]>(`/events/${eventId}/participants`);
 }

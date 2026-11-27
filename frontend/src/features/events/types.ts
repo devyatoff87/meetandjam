@@ -1,6 +1,12 @@
-import type { Event, EventCategory, CreateEventInput, UpdateEventInput } from "@/lib/api/types";
+import type {
+  Event,
+  EventCategory,
+  CreateEventInput,
+  UpdateEventInput,
+  Participant,
+} from "@/lib/api/types";
 
-export type { Event, EventCategory, CreateEventInput, UpdateEventInput };
+export type { Event, EventCategory, CreateEventInput, UpdateEventInput, Participant };
 
 export type EventsQuery = {
   page?: number;
