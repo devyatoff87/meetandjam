@@ -57,15 +57,13 @@ export function getMembership(eventId: string, token: string) {
   });
 }
 
-export function joinEvent(
-  eventId: string,
-  note: string,
-  token: string,
-  operation: EventUserOperation = "join",
-) {
-  return apiFetch("/events/" + operation, {
+export function joinEvent(eventId: string, note: string, token: string) {
+  return apiFetch("/events/join", {
     method: "POST",
-    body: { eventId: eventId, note: note },
+    body: {
+      eventId,
+      note,
+    },
     token,
   });
 }
