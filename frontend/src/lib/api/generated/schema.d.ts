@@ -425,6 +425,7 @@ export interface paths {
                          * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
                          */
                         eventId: string;
+                        note: string;
                     };
                 };
             };
@@ -527,6 +528,7 @@ export interface paths {
                             name: string;
                             email: string;
                             joinedAt: string;
+                            note: string | null;
                         }[];
                     };
                 };
